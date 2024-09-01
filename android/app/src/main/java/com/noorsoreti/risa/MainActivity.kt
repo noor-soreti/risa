@@ -1,4 +1,4 @@
-package com.risa
+package com.noorsoreti.risa
 
 import android.os.Build
 import android.os.Bundle
