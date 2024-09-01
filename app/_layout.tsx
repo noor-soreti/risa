@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import TabLayout from "./(app)/_layout";
 import Message from "./(app)/chat/message/message";
 import HomeScreen from "./(app)/home";
+import HomeSettings from "./(app)/home/homeSettings";
 
 export default function RootLayout() {
 
@@ -58,6 +59,13 @@ function AppNavigator () {
           <Stack.Screen
             name="message"
             component={Message}
+            options={{
+              headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="homeSettings"
+            component={HomeSettings}
             options={{
               headerShown: false
             }}

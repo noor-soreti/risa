@@ -33,7 +33,7 @@ export default function Register({navigation}: any) {
 
   const registerUser = () => {
     if (password === confirmPassword) {      
-      register(email, password)
+      register(email, password, username)
     } else {
       setWarn("Passwords must match")
     }

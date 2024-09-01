@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { storeData, getItemFor } from "@/helperFunction/asyncStorageHelper";
+import { doc, setDoc } from "firebase/firestore";
 
 const AuthContext = createContext(null);
 
@@ -39,20 +40,25 @@ export const AuthProvider = ({ children }: any) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log(`login user: ${user}`);
+      console.log(`login user: SUCCESS`);
     } catch (e) {
-      console.log(`login user error: ${e}`);
+      console.log(`login user ERROR`);
       setWarn(e)
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, username: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log(`register user: ${user}`);
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        username,
+        email,
+        id: userCredential.user.uid
+    })
+      console.log(`register user: SUCCESS`);
     } catch (e) {
-      console.log(`register user error: ${e}`);
+      console.log(`register user: ERROR`);
+      setWarn(e.message || 'Registration failed');
     }
   };
 

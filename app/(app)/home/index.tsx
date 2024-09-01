@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import CustomDropdown from "@/components/CustomDropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function MainScreen() {
+export default function MainScreen({navigation}) {
   const [isSearchSelected, setIsSearchSelected] = useState(false)
   const [channels, setChannels] = useState(false)
   const [friends, setFriends] = useState(false)
@@ -22,7 +22,7 @@ export default function MainScreen() {
                     <Pressable onPress={() => console.log('add friend')}>
                       <FontAwesome size={20} name="user-plus" />
                     </Pressable>
-                    <Pressable onPress={() => console.log('settings')}>
+                    <Pressable onPress={() => navigation.navigate('homeSettings')}>
                       <FontAwesome size={20} name="cog" />
                     </Pressable>
                 </View>
