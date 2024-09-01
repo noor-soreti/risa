@@ -1,2 +1,0 @@
-<Slot/>
-In Expo and React Native, <Slot> is a special component provided by Expo's expo-router package. It's used to define a placeholder where child components or nested routes can be rendered. This is particularly useful when building navigation structures with nested layouts or when you want to control where certain parts of your app are displayed within a specific screen or layout.

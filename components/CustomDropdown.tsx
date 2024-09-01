@@ -12,11 +12,6 @@ export default function CustomDropdown(props: any) {
 
     useEffect(() => {
 
-      (async () => {
-        console.log("bleh");
-        const { status } = await Contacts.requestPermissionsAsync()
-      })()
-
       // (async () => {
       //   const { status } = await Contacts.requestPermissionsAsync();
       //   if (status === 'granted') {
@@ -162,7 +157,7 @@ const styles = StyleSheet.create({
       },
       dropDownItem: {
         minHeight: 40,
-        // padding: 10,
+        padding: 10,
         gap: 10,
       },
       itemStyle: {
