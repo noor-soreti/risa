@@ -1,0 +1,62 @@
+{
+    "1": {
+        "channelName": "RISA",
+        "logo": "./assets/images/icon.png",
+        "description": "Your go-to chat app",
+        "promotions": {
+            "1": {
+                "title": "Summer Specials",
+                "promotionDescription": "Get your favourite drinks to cool down this summer!"
+            },
+            "2": {
+                "title": "Winter Wonder Land",
+                "promotionDescription": "Cozy up with a warm cup of our Pistachio Latte to keep you warm this Rainy Season"
+            }
+        }
+    },
+    "2": {
+        "channelName": "Golden Coffee Roasters",
+        "logo": "./assets/images/icon.png",
+        "description": "Your go-to chat app",
+        "promotions": {
+            "1": {
+                "title": "Summer Specials",
+                "promotionDescription": "Get your favourite drinks to cool down this summer!"
+            },
+            "2": {
+                "title": "Winter Wonder Land",
+                "promotionDescription": "Cozy up with a warm cup of our Pistachio Latte to keep you warm this Rainy Season"
+            }
+        }
+    },
+    "3": {
+        "channelName": "Cupcake Delights",
+        "logo": "./assets/images/icon.png",
+        "description": "Your go-to chat app",
+        "promotions": {
+            "1": {
+                "title": "Summer Specials",
+                "promotionDescription": "Get your favourite drinks to cool down this summer!"
+            },
+            "2": {
+                "title": "Winter Wonder Land",
+                "promotionDescription": "Cozy up with a warm cup of our Pistachio Latte to keep you warm this Rainy Season"
+            }
+        }
+    },
+    "4": {
+        "channelName": "DUKAMO",
+        "logo": "./assets/images/icon.png",
+        "description": "Your go-to chat app",
+        "promotions": {
+            "1": {
+                "title": "Summer Specials",
+                "promotionDescription": "Get your favourite drinks to cool down this summer!"
+            },
+            "2": {
+                "title": "Winter Wonder Land",
+                "promotionDescription": "Cozy up with a warm cup of our Pistachio Latte to keep you warm this Rainy Season"
+            }
+        }
+    }
+}
