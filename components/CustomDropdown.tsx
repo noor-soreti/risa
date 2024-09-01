@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, FlatList, Pressable, Keyboard, Image, ScrollVie
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import mock from '../mock/channels.json'
-import * as Contacts from "expo-contacts"
 
 export default function CustomDropdown(props: any) {
     const { channels, friends, groups, services, setChannels, setFriends, setGroups, setServices } = props
