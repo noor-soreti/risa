@@ -1,4 +1,4 @@
-package com.noorsoreti.risa
+package com.risa
 
 import android.app.Application
 import android.content.res.Configuration

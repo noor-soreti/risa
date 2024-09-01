@@ -1,11 +1,11 @@
 import { Image, Pressable, Text, TextInput, View } from "react-native";
 import { StyleSheet } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomDropdown from "@/components/CustomDropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomeScreen() {
+export default function MainScreen() {
   const [isSearchSelected, setIsSearchSelected] = useState(false)
   const [channels, setChannels] = useState(false)
   const [friends, setFriends] = useState(false)

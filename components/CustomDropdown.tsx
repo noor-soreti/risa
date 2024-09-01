@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, FlatList, Pressable, Keyboard, Image, ScrollVie
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import mock from '../mock/channels.json'
-import * as Contacts from 'expo-contacts';
+import * as Contacts from "expo-contacts"
 
 export default function CustomDropdown(props: any) {
     const { channels, friends, groups, services, setChannels, setFriends, setGroups, setServices } = props
@@ -11,19 +11,25 @@ export default function CustomDropdown(props: any) {
     const navigation = useNavigation()
 
     useEffect(() => {
+
       (async () => {
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status === 'granted') {
-          const { data } = await Contacts.getContactsAsync({
-            fields: [Contacts.Fields.Emails],
-          });
+        console.log("bleh");
+        const { status } = await Contacts.requestPermissionsAsync()
+      })()
+
+      // (async () => {
+      //   const { status } = await Contacts.requestPermissionsAsync();
+      //   if (status === 'granted') {
+      //     const { data } = await Contacts.getContactsAsync({
+      //       fields: [Contacts.Fields.Emails],
+      //     });
   
-          if (data.length > 0) {
-            const contact = data[0];
-          }
-          setContacts(data)
-        }
-      })();
+      //     if (data.length > 0) {
+      //       const contact = data[0];
+      //     }
+      //     setContacts(data)
+      //   }
+      // })();
     }, []);
 
     const toggleState = (key: string) => {
