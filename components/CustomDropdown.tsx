@@ -11,7 +11,6 @@ export default function CustomDropdown(props: any) {
     const navigation = useNavigation()
 
     useEffect(() => {
-
       // (async () => {
       //   const { status } = await Contacts.requestPermissionsAsync();
       //   if (status === 'granted') {
