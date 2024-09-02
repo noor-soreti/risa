@@ -47,7 +47,8 @@ export default function Message() {
             <KeyboardAvoidingView 
                 style={{flex: 1}} 
                 behavior={Platform.OS === "ios" ? "height" : undefined}
-                keyboardVerticalOffset={120}>
+                keyboardVerticalOffset={60}
+                >
                 <ScrollView style={styles.center}>
 
                     <View style={[styles.messageContainer, styles.senderMessageContainer]}>

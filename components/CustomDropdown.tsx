@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, FlatList, Pressable, Keyboard, Image, ScrollVie
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import mock from '../mock/channels.json'
+import UserContacts from "./UserContacts";
 
 export default function CustomDropdown(props: any) {
     const { channels, friends, groups, services, setChannels, setFriends, setGroups, setServices } = props
@@ -110,18 +111,19 @@ export default function CustomDropdown(props: any) {
                             }
                             />
                         : item.value == "friends" ?
-                        <ScrollView style={styles.scrollView}>
-                          {
-                            Object.keys(contacts).map(contact => (
-                              <View style={styles.contact}>
-                                <Image style={styles.image} source={require('../assets/images/avatar.png')} />
-                                <View>
-                                  <Text> {contacts[contact]['name']} </Text>
-                                </View>
-                              </View>
-                            ))
-                          }
-                        </ScrollView>
+                        <UserContacts contacts={contacts}/>
+                        // <ScrollView style={styles.scrollView}>
+                        //   {
+                        //     Object.keys(contacts).map(contact => (
+                        //       <View style={styles.contact}>
+                        //         <Image style={styles.image} source={require('../assets/images/avatar.png')} />
+                        //         <View>
+                        //           <Text> {contacts[contact]['name']} </Text>
+                        //         </View>
+                        //       </View>
+                        //     ))
+                        //   }
+                        // </ScrollView>
                         :
                         <Text>{item.value}</Text>
                       }

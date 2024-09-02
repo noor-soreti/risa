@@ -1,22 +1,24 @@
 import { useState } from "react";
-import { View, Text, Pressable, TextInput, Button, KeyboardAvoidingView, Image } from "react-native";
+import { View, Text, Pressable, TextInput, Button, KeyboardAvoidingView, Image, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import InputBox from "@/components/InputBox";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import { doc, setDoc } from "firebase/firestore";
 // import * as ImagePicker from 'expo-image-picker';
 
 export default function Register({navigation}: any) { 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [username, setUsername] = useState('')
+  const [name, setName] = useState('')
   const [image, setImage] = useState(null);
   const [warn, setWarn] = useState('')
   const { register } = useAuth()
 
-  const isButtonDisabled = !email || password.length < 6 || confirmPassword.length < 6 || !username
+  const isButtonDisabled = !email || password.length < 6 || confirmPassword.length < 6 || !name
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -31,9 +33,30 @@ export default function Register({navigation}: any) {
     // }
   };
 
-  const registerUser = () => {
-    if (password === confirmPassword) {      
-      register(email, password, username)
+  const registerUser = async() => {
+    if (password === confirmPassword) {            
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log(userCredential);
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          displayName: name,
+          email,
+          status: 'Feeling Happy',
+          messages: [],
+          calls: [],
+          friends: [],
+          id: userCredential.user.uid})
+          
+      } catch (e) {
+        if (e === "Firebase: Error (auth/network-request-failed).") {
+          setWarn('Not connected to network')
+        } else if (e === "Firebase: Error (auth/email-already-in-use).") {
+          setWarn("Email already in use")
+        } else {
+          console.log(e);
+          
+        }
+      }
     } else {
       setWarn("Passwords must match")
     }
@@ -50,6 +73,10 @@ export default function Register({navigation}: any) {
                 <TextInput style={styles.input} value={email} onChangeText={setEmail}/>
             </View> */}
 
+          <TouchableOpacity style={{alignSelf: 'flex-start', padding: 5}} onPress={() => navigation.goBack()}>
+            <Ionicons name="close-outline" size={28} />
+          </TouchableOpacity>
+
           <Button title="Pick an image from camera roll" onPress={pickImage} />
           { image && <Image source={{ uri: image}} style={styles.image} />}
           {!image && <Image 
@@ -63,21 +90,21 @@ export default function Register({navigation}: any) {
               <InputBox placeholder="Email" value={email} onChangeText={setEmail}/>
               <InputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
               <InputBox placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true}/>
-              <InputBox placeholder="Username" value={username} onChangeText={setUsername}/>
+              <InputBox placeholder="Full Name" value={name} onChangeText={setName} autoCapitalize="words"/>
             </KeyboardAvoidingView>
           </View>
 
-      { warn && <View><Text style={{color: 'red', paddingBottom: 10}}>{warn}</Text></View>}
+      { warn && <View><Text style={{color: 'red'}}>{warn}</Text></View>}
             
-          <Pressable onPress={() => registerUser() } style={[styles.button, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
+          <TouchableOpacity onPress={() => registerUser() } style={[styles.button, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
             <Text style={styles.text}>NEXT</Text>
-          </Pressable>
+          </TouchableOpacity>
 
           {/* <ButtonComponent text='Next' screenName='verification' disabled={isButtonDisabled}/> */}
 
           <View  style={{alignItems:'center'}}>
               <Text style={{marginTop: 20, color: 'grey'}}>
-                  We'll send you a 5-digit code to verify your number
+                  We'll email you a 5-digit code to verify your email
               </Text>
               <Text style={{marginTop: 20, color: 'grey'}}>
                   Don't have a local number?
@@ -86,75 +113,89 @@ export default function Register({navigation}: any) {
         </View>
     )
 }
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        paddingTop: 90,
-        backgroundColor: '#FFFFFF',
-        gap: 20
-      },
-      image: {
-        width: 80, 
-        height: 80, 
-        borderWidth: 1,
-        borderColor: '#e7e7e7',
-        borderRadius: 40
-      },
-      inputArea: {
-        display: 'flex',
-        flexDirection: 'row',
-        width: 307,
-        marginTop: 20
-      },
-      dropdown: {
-        width: 102,
-        height: 38,
-        backgroundColor: '#7CA4FC',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 3
-      },
-      dropdownText: {
-        color: '#FFFFFF'
-      },
-      input: {
-        height: 38,
-        width: 207,
-        marginBottom: 10,
-        padding: 10,
-        borderColor: '#e7e7e7',
-        color: '#7b8d93',
-        borderWidth: 1,
-        borderRadius: 3
-      },
-      invalidPhoneNumber: {
-        color: 'red',
-        paddingBottom: 10
-      },
-      button: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 32,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: '#7CA4FC',
-        width: 307,
-        height: 38,
-        marginBottom: 10
-      },
-      text: {
-        fontSize: 15,
-        height: 16,
-        fontFamily: 'Arial',
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-        textAlign: 'center'
-      },
-      disabled: {
-        backgroundColor: '#e7e7e7',
-      }
-      
-    })
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFF7F8',
+    gap: 15,
+    padding: 20,
+  },
+  image: {
+    width: 90,
+    height: 90,
+    borderWidth: 2,
+    borderColor: '#FFD1DC',
+    borderRadius: 45,
+    marginTop: 20,
+  },
+  inputArea: {
+    flexDirection: 'row',
+    width: 320,
+    marginTop: 20,
+    backgroundColor: '#FFF0F5',
+    borderRadius: 15,
+    padding: 10,
+    shadowColor: '#FFC1CC',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+  },
+  dropdown: {
+    width: 100,
+    height: 40,
+    backgroundColor: '#7CA4FC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  dropdownText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  input: {
+    height: 40,
+    width: 200,
+    padding: 10,
+    borderColor: '#FFD1DC',
+    color: '#7b8d93',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#FFF0F5',
+    shadowColor: '#FFC1CC',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  invalidPhoneNumber: {
+    color: 'red',
+    paddingBottom: 10,
+    fontSize: 14,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 20,
+    backgroundColor: '#7CA4FC',
+    width: 320,
+    height: 45,
+    shadowColor: '#7CA4FC',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    fontFamily: 'Arial',
+  },
+  disabled: {
+    backgroundColor: '#e7e7e7',
+  },
+});

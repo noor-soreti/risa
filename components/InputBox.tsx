@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
 export default function InputBox(props: any) {
-  const { placeholder, value, secureTextEntry, onChangeText } = props;
+  const { placeholder, value, secureTextEntry, onChangeText, autoCapitalize } = props;
 
   return (
     <TextInput style={styles.input}
         onChangeText={onChangeText}
         placeholder={placeholder}
         value={value}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize || 'none'}
         secureTextEntry={secureTextEntry}
         >
     </TextInput>

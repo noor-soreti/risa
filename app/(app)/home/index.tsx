@@ -1,9 +1,12 @@
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, TextInput, View } from "react-native";
 import { StyleSheet } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useEffect, useState } from "react";
 import CustomDropdown from "@/components/CustomDropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/context/AuthContext";
+import { auth, db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function MainScreen({navigation}) {
   const [isSearchSelected, setIsSearchSelected] = useState(false)
@@ -11,10 +14,34 @@ export default function MainScreen({navigation}) {
   const [friends, setFriends] = useState(false)
   const [groups, setGroups] = useState(false)
   const [services, setServices] = useState(false)
+  const [ userInfo, setUserInfo ] = useState('')
+  const [ loading, setLoading ] = useState(true)
 
+  const { user } = useAuth()
+
+  useEffect(() => {    
+    const getUserInfo = async () => {      
+      const docRef = doc(db, 'users', user)
+      await getDoc(docRef)
+        .then(ref => {
+          setUserInfo(ref.data())
+          setLoading(false)
+        })
+        .catch(e => console.log(`getDoc: ${e}`))
+    }
+    getUserInfo().catch((e) => console.log(`getUserInfo(): ${e}`))
+  }, [])
+  
     return( 
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {
+              loading ?
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                  <ActivityIndicator size="large" color="blue"/>
+                </View>
+              : 
+              <>
+                <View style={styles.header}>
                 <View style={styles.headerOptions}>
                     <Pressable onPress={() => setIsSearchSelected(prev=>!prev)}>
                       <FontAwesome size={20} name="search" />
@@ -33,11 +60,11 @@ export default function MainScreen({navigation}) {
                         style={styles.image}
                     />
                     <View style={styles.userInfo}>
-                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Daniel</Text>
-                        <Text style={{color: '#7b7b92'}}>Feeling happy</Text>
+                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>{userInfo.displayName}</Text>
+                        <Text style={{color: '#7b7b92'}}> {userInfo.status} </Text>
                     </View>
                 </View>
-            </View>
+              </View>
 
               {isSearchSelected ?
                 <View style={styles.search}>
@@ -53,9 +80,9 @@ export default function MainScreen({navigation}) {
                 :
                   null
               } 
-              
-           <CustomDropdown {...{channels, friends, groups, services, setChannels, setFriends, setGroups, setServices}} />
-            
+              <CustomDropdown {...{channels, friends, groups, services, setChannels, setFriends, setGroups, setServices}} />
+              </>
+            }
         </SafeAreaView>
     )
 }

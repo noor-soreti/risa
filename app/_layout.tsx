@@ -8,6 +8,9 @@ import TabLayout from "./(app)/_layout";
 import Message from "./(app)/chat/message/message";
 import HomeScreen from "./(app)/home";
 import HomeSettings from "./(app)/home/homeSettings";
+import IndexView from "./start";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function RootLayout() {
 
@@ -23,15 +26,13 @@ export default function RootLayout() {
 function AppNavigator () {
   const Stack = createNativeStackNavigator();
   const [ hasLaunched, setHasLaunched ] = useState(false)
-  const { user } = useAuth()   
+  const { user } = useAuth()     
 
   useEffect(() => {
     const getData = async () => { 
       if (user == null) {
-        console.log(`AppNavigator - no user:  ${user}`); 
         setHasLaunched(false)
       } else {
-        console.log(`AppNavigator - yes user: ${JSON.stringify(user)}`); 
         setHasLaunched(true)
       }
     }
@@ -39,7 +40,7 @@ function AppNavigator () {
   }, [user])
 
   return (
-    <Stack.Navigator initialRouteName="sign-in">
+    <Stack.Navigator>
       { hasLaunched ?
         <>
           <Stack.Screen
@@ -74,20 +75,24 @@ function AppNavigator () {
         </>
         : 
         <>
-          <Stack.Screen
-            name="sign-in"
-            component={SignIn}
-            options={{
-              headerShown: false
-            }}
-          />
+        
+          <Stack.Screen name="start" component={IndexView} options={{headerShown: false}}/>
+          <Stack.Group screenOptions={{ presentation: 'modal'}}>
+            <Stack.Screen
+              name="sign-in"
+              component={SignIn}
+              options={{
+                headerShown: false
+              }}
+            />
           <Stack.Screen
             name="register"
             component={Register}
             options={{
               headerShown: false
             }}
-          />
+            />
+            </Stack.Group>
         </>
       }
 
