@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { auth, db } from "@/firebase";
 import { deleteUser, signOut } from "firebase/auth";
-import { Pressable, SafeAreaView, StyleSheet, Text, Alert } from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, Alert, TouchableOpacity } from "react-native";
 import { defaultStyles } from "@/constants/Styles";
 import { deleteDoc, doc } from "firebase/firestore";
 
@@ -62,12 +62,12 @@ export default function HomeSettings() {
 
     return(
         <SafeAreaView style={styles.container}>
-            <Pressable style={[defaultStyles.btn, styles.button, styles.signOut]} onPress={signOutAlert}>
+            <TouchableOpacity style={[defaultStyles.btn, styles.button, styles.signOut]} onPress={signOutAlert}>
                 <Text style={styles.buttonText}>sign out</Text>
-            </Pressable>
-            <Pressable style={[defaultStyles.btn, styles.button, styles.delete]} onPress={deleteAccountAlert}>
+            </TouchableOpacity>
+            <TouchableOpacity style={[defaultStyles.btn, styles.button, styles.delete]} onPress={deleteAccountAlert}>
                 <Text style={styles.buttonText}>delete account</Text>
-            </Pressable>
+            </TouchableOpacity>
         </SafeAreaView>
     )
 }

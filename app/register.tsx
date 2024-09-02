@@ -7,7 +7,7 @@ import { auth, db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function Register({navigation}: any) { 
   const [email, setEmail] = useState('')
@@ -21,16 +21,19 @@ export default function Register({navigation}: any) {
   const isButtonDisabled = !email || password.length < 6 || confirmPassword.length < 6 || !name
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    // let result = await ImagePicker.launchImageLibraryAsync({
-    //   mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //   allowsEditing: true,
-    //   aspect: [4, 3],
-    //   quality: 1,
-    // });
-    // if (!result.canceled) {
-    //   setImage(result.assets[0].uri);
-    // }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4,3],
+      quality: 1
+    })
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri)
+    }
+    
   };
 
   const registerUser = async() => {
@@ -42,11 +45,14 @@ export default function Register({navigation}: any) {
           displayName: name,
           email,
           status: 'Feeling Happy',
-          messages: [],
-          calls: [],
           friends: [],
           id: userCredential.user.uid})
-          
+        await setDoc(doc(db, "userChats", userCredential.user.uid), {
+          chats: []
+        })
+        await setDoc(doc(db, "userCalls", userCredential.user.uid), {
+          chats: []
+        })
       } catch (e) {
         if (e === "Firebase: Error (auth/network-request-failed).") {
           setWarn('Not connected to network')
@@ -65,7 +71,8 @@ export default function Register({navigation}: any) {
     return (
         <View style={styles.container}>
             {/* <Text style={{color: '#7CA4FC', fontWeight: '700', fontSize: 17}}>Enter your phone number</Text> */}
-
+            <Button title="Pick an image from camera roll" onPress={pickImage} />
+            {image && <Image source={{ uri: image }} style={styles.image} />}
             {/* <View style={styles.inputArea}>
                 <Pressable style={styles.dropdown}>
                     <Text style={styles.dropdownText}>+251</Text>
@@ -77,12 +84,12 @@ export default function Register({navigation}: any) {
             <Ionicons name="close-outline" size={28} />
           </TouchableOpacity>
 
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          {/* <Button title="Pick an image from camera roll" onPress={pickImage} />
           { image && <Image source={{ uri: image}} style={styles.image} />}
           {!image && <Image 
               source={require('../assets/images/user-profile.png')}
               style={styles.image}
-          />}
+          />} */}
 
 
           <View style={{marginBottom: 5}}>
