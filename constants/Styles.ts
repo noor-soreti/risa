@@ -9,6 +9,7 @@ export const defaultStyles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     paddingHorizontal: 10,
+    width: '100%'
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -21,4 +22,7 @@ export const defaultStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: ColorPalette.light,
   },
+  loadingBtn: {
+    
+  }
 });

@@ -10,6 +10,7 @@ export default function InputBox(props: any) {
         placeholder={placeholder}
         value={value}
         autoCapitalize={autoCapitalize || 'none'}
+        autoComplete='off'
         secureTextEntry={secureTextEntry}
         >
     </TextInput>

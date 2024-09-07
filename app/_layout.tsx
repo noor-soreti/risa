@@ -1,47 +1,67 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SignIn from "./sign-in";
-import Register from "./register";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
-import { useEffect, useState } from "react";
-import TabLayout from "./(app)/_layout";
-import Message from "./(app)/chat/message/message";
-import HomeScreen from "./(app)/home";
 import HomeSettings from "./(app)/home/homeSettings";
+import UserInfo from "./(app)/userInfo/userInfo";
+import Message from "./(app)/chat/message/message";
+import TabLayout from "./(app)/_layout";
+import HomeScreen from "./(app)/home";
+import Register from "./register";
 import IndexView from "./start";
-import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import SignIn from "./sign-in";
+import { auth } from "@/firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { ActivityIndicator, View } from "react-native";
+import { useUserStore } from "@/helperFunction/userStore";
+import { NavigationContainer } from "@react-navigation/native";
+import { getItemFor, storeData } from "@/helperFunction/asyncStorageHelper";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import mock from '@/mock/user.json'
+
+const HAS_LAUNCHED = false
 
 export default function RootLayout() {
 
   return (
-    <AuthProvider>
+    // <AuthProvider>
       <NavigationContainer independent={true}>
         <AppNavigator />
       </NavigationContainer>
-    </AuthProvider>
+    // </AuthProvider>
   );
 }
 
 function AppNavigator () {
   const Stack = createNativeStackNavigator();
-  const [ hasLaunched, setHasLaunched ] = useState(false)
-  const { user } = useAuth()     
+  const { currentUser, isLoading, fetchUserInfo }: any = useUserStore()
+  // console.log(currentUser)
 
   useEffect(() => {
-    const getData = async () => { 
-      if (user == null) {
-        setHasLaunched(false)
+    const test = async () => {
+      const getItem = await getItemFor('HAS_LAUNCHED')
+      if ( getItem == 'false' ) {
+        console.log('HAS_LAUNCHED: false')
       } else {
-        setHasLaunched(true)
+        console.log('true');
       }
     }
-    getData().catch((e) => console.log(e))
-  }, [user])
+    test()
+    
+    const unSubscribe = onAuthStateChanged(auth, (user => {
+      fetchUserInfo(user?.uid)
+    }))
+    return () => {
+      unSubscribe()
+    }
+  }, [fetchUserInfo]) 
+
+  if (isLoading) return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size='large' color='blue'/>
+      </View>
+    )
 
   return (
     <Stack.Navigator>
-      { hasLaunched ?
+      { currentUser ?
         <>
           <Stack.Screen
             name="tab"
@@ -71,11 +91,16 @@ function AppNavigator () {
               headerShown: false
             }}
           />
-
+          <Stack.Screen
+            name="userInfo"
+            component={UserInfo}
+            options={{
+              headerShown: false
+            }}
+          />
         </>
         : 
         <>
-        
           <Stack.Screen name="start" component={IndexView} options={{headerShown: false}}/>
           <Stack.Group screenOptions={{ presentation: 'modal'}}>
             <Stack.Screen
@@ -95,7 +120,6 @@ function AppNavigator () {
             </Stack.Group>
         </>
       }
-
     </Stack.Navigator>
   )
 }

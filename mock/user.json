@@ -1,11 +1,105 @@
 {
-    "KpU7PXzUrjPLwRgACfngYemQOug1": {
-        "email": " test@test.com",
-        "displayName": "Daniel",
-        "status": "Feeling Happy",
-        "channels": ["1"],
-        "friends": {
-            
-        }
-    }
-}
+    "users": [
+      {
+        "fullName": "John Doe",
+        "email": "johndoe@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Jane Smith",
+        "email": "janesmith@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Alice Johnson",
+        "email": "alicejohnson@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Bob Brown",
+        "email": "bobbrown@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Charlie Davis",
+        "email": "charliedavis@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Diana Evans",
+        "email": "dianaevans@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Ethan Garcia",
+        "email": "ethangarcia@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Fiona Harris",
+        "email": "fionaharris@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "George Wilson",
+        "email": "georgewilson@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Hannah Lee",
+        "email": "hannahlee@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Ian Walker",
+        "email": "ianwalker@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Julia White",
+        "email": "juliawhite@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Kevin Young",
+        "email": "kevinyoung@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Laura King",
+        "email": "lauraking@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Michael Green",
+        "email": "michaelgreen@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Nina Adams",
+        "email": "ninaadams@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Oscar Martin",
+        "email": "oscarmartin@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Paula Clark",
+        "email": "paulaclark@example.com",
+        "status": "inactive"
+      },
+      {
+        "fullName": "Quinn Baker",
+        "email": "quinnbaker@example.com",
+        "status": "active"
+      },
+      {
+        "fullName": "Rachel Scott",
+        "email": "rachelscott@example.com",
+        "status": "inactive"
+      }
+    ]
+  }
+  

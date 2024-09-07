@@ -3,47 +3,52 @@ import { View, Text, Pressable, TextInput, Button, KeyboardAvoidingView, Image, 
 import { StyleSheet } from "react-native";
 import InputBox from "@/components/InputBox";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, db } from "@/firebase";
+import { auth, db, storage } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
+import upload from "@/helperFunction/upload";
+import { ref } from "firebase/storage";
+import { defaultStyles } from "@/constants/Styles";
 
 export default function Register({navigation}: any) { 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [name, setName] = useState('')
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
   const [warn, setWarn] = useState('')
-  const { register } = useAuth()
+  const [ loading, setLoading ] = useState(false)
 
   const isButtonDisabled = !email || password.length < 6 || confirmPassword.length < 6 || !name
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4,3],
-      quality: 1
-    })
-
+      aspect: [4, 3],
+      quality: 1,
+    });
     console.log(result);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri)
+      setImage(result.assets[0].uri);
+      console.log(result.assets[0].uri);
     }
-    
   };
 
-  const registerUser = async() => {
+  const handleRegister = async () => {
+    setLoading(true)
     if (password === confirmPassword) {            
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log(userCredential);
+        const imageUrl = await upload(image)
         await setDoc(doc(db, "users", userCredential.user.uid), {
           displayName: name,
           email,
+          avatar: imageUrl,
           status: 'Feeling Happy',
           friends: [],
           id: userCredential.user.uid})
@@ -51,28 +56,22 @@ export default function Register({navigation}: any) {
           chats: []
         })
         await setDoc(doc(db, "userCalls", userCredential.user.uid), {
-          chats: []
+          calls: []
         })
       } catch (e) {
-        if (e === "Firebase: Error (auth/network-request-failed).") {
-          setWarn('Not connected to network')
-        } else if (e === "Firebase: Error (auth/email-already-in-use).") {
-          setWarn("Email already in use")
-        } else {
-          console.log(e);
-          
-        }
+        console.log(e.message);
+        setWarn(e.message)
+      } finally {
       }
     } else {
       setWarn("Passwords must match")
     }
+    setLoading(false)
   }
 
     return (
         <View style={styles.container}>
             {/* <Text style={{color: '#7CA4FC', fontWeight: '700', fontSize: 17}}>Enter your phone number</Text> */}
-            <Button title="Pick an image from camera roll" onPress={pickImage} />
-            {image && <Image source={{ uri: image }} style={styles.image} />}
             {/* <View style={styles.inputArea}>
                 <Pressable style={styles.dropdown}>
                     <Text style={styles.dropdownText}>+251</Text>
@@ -84,27 +83,27 @@ export default function Register({navigation}: any) {
             <Ionicons name="close-outline" size={28} />
           </TouchableOpacity>
 
-          {/* <Button title="Pick an image from camera roll" onPress={pickImage} />
+          <Button title="Pick an image from camera roll" onPress={pickImage} />
           { image && <Image source={{ uri: image}} style={styles.image} />}
           {!image && <Image 
               source={require('../assets/images/user-profile.png')}
               style={styles.image}
-          />} */}
+          />}
 
 
           <View style={{marginBottom: 5}}>
             <KeyboardAvoidingView behavior="padding"> 
-              <InputBox placeholder="Email" value={email} onChangeText={setEmail}/>
+              <InputBox placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" />
               <InputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
               <InputBox placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true}/>
               <InputBox placeholder="Full Name" value={name} onChangeText={setName} autoCapitalize="words"/>
             </KeyboardAvoidingView>
           </View>
 
-      { warn && <View><Text style={{color: 'red'}}>{warn}</Text></View>}
+          { warn && <View><Text style={{color: 'red'}}>{warn}</Text></View>}
             
-          <TouchableOpacity onPress={() => registerUser() } style={[styles.button, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
-            <Text style={styles.text}>NEXT</Text>
+          <TouchableOpacity onPress={() => handleRegister() } style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
+            <Text style={styles.text}>{ loading ? "Loading.." : "NEXT"}</Text>
           </TouchableOpacity>
 
           {/* <ButtonComponent text='Next' screenName='verification' disabled={isButtonDisabled}/> */}
@@ -181,19 +180,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontSize: 14,
   },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 20,
+  btnColour: {
     backgroundColor: '#7CA4FC',
-    width: 320,
-    height: 45,
-    shadowColor: '#7CA4FC',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
   },
   text: {
     fontSize: 16,

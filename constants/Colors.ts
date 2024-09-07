@@ -47,5 +47,6 @@ export const ColorPalette = {
   pink: '#F655FF',
   magenta: "#FF00FF",
   peach: "#FFE6CC",
-  fuchsia: "#FF007F"
+  fuchsia: "#FF007F",
+  borderGrey: "#1119270a"
 }

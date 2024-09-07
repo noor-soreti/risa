@@ -1,88 +1,59 @@
-import { ActivityIndicator, Image, Pressable, Text, TextInput, View } from "react-native";
-import { StyleSheet } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useEffect, useState } from "react";
 import CustomDropdown from "@/components/CustomDropdown";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AddFriend from "@/components/AddFriendModal";
+import { StyleSheet } from "react-native";
+import { useState } from "react";
+import { useUserStore } from "@/helperFunction/userStore";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "@/context/AuthContext";
-import { auth, db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {Alert, Image, Modal, Pressable, Text, View } from "react-native";
 
-export default function MainScreen({navigation}) {
-  const [isSearchSelected, setIsSearchSelected] = useState(false)
+export default function MainScreen({navigation}: any) {
   const [channels, setChannels] = useState(false)
   const [friends, setFriends] = useState(false)
   const [groups, setGroups] = useState(false)
   const [services, setServices] = useState(false)
-  const [ userInfo, setUserInfo ] = useState('')
-  const [ loading, setLoading ] = useState(true)
+  const { currentUser }: any = useUserStore()
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const { user } = useAuth()
-
-  useEffect(() => {    
-    const getUserInfo = async () => {      
-      const docRef = doc(db, 'users', user)
-      await getDoc(docRef)
-        .then(ref => {
-          setUserInfo(ref.data())
-          setLoading(false)
-        })
-        .catch(e => console.log(`getDoc: ${e}`))
-    }
-    getUserInfo().catch((e) => console.log(`getUserInfo(): ${e}`))
-  }, [])
-  
     return( 
-        <SafeAreaView style={styles.container}>
-            {
-              loading ?
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                  <ActivityIndicator size="large" color="blue"/>
-                </View>
-              : 
-              <>
-                <View style={styles.header}>
-                <View style={styles.headerOptions}>
-                    <Pressable onPress={() => setIsSearchSelected(prev=>!prev)}>
-                      <FontAwesome size={20} name="search" />
-                    </Pressable>
-                    <Pressable onPress={() => console.log('add friend')}>
-                      <FontAwesome size={20} name="user-plus" />
-                    </Pressable>
-                    <Pressable onPress={() => navigation.navigate('homeSettings')}>
-                      <FontAwesome size={20} name="cog" />
-                    </Pressable>
-                </View>
+        <SafeAreaView style={styles.container} >
+          <View style={styles.header}>
+            <View style={styles.headerOptions}>
+              {/* <Pressable onPress={() => setIsSearchSelected(prev=>!prev)}>
+                <FontAwesome size={20} name="search" />
+              </Pressable> */}
+              <Pressable onPress={() => setModalVisible(prev=>!prev)}>
+                <FontAwesome size={20} name="user-plus" />
+              </Pressable>
+              <Pressable onPress={() => navigation.navigate('homeSettings')}>
+                <FontAwesome size={20} name="cog" />
+              </Pressable>
+            </View>
 
-                <View style={styles.headerContent}>
-                    <Image 
-                        source={require('../../../assets/images/avatar.png')}
-                        style={styles.image}
-                    />
-                    <View style={styles.userInfo}>
-                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>{userInfo.displayName}</Text>
-                        <Text style={{color: '#7b7b92'}}> {userInfo.status} </Text>
-                    </View>
-                </View>
+            <View style={styles.headerContent}>
+              <Image 
+                  source={currentUser.avatar || require('../../../assets/images/avatar.png')}
+                  style={styles.image}
+              />
+              <View style={styles.userInfo}>
+                  <Text style={{fontSize: 20, fontWeight: 'bold'}}> {currentUser.displayName} </Text>
+                  <Text style={{color: '#7b7b92'}}> {currentUser.status} </Text>
               </View>
+            </View>
+          </View>
+          
+          <CustomDropdown {...{channels, friends, groups, services, setChannels, setFriends, setGroups, setServices}} />
 
-              {isSearchSelected ?
-                <View style={styles.search}>
-                    <View style={styles.searchBar}>
-                      <FontAwesome size={15} name="search" style={{padding: 8, color: '#a1a1a1'}} />
-                      <TextInput style={styles.input} autoCapitalize="none"
-                      
-                      />
-                    </View> 
-                    <View>
-                    </View>
-                </View>
-                :
-                  null
-              } 
-              <CustomDropdown {...{channels, friends, groups, services, setChannels, setFriends, setGroups, setServices}} />
-              </>
-            }
+          <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+                setModalVisible(!modalVisible);
+              }}>
+              <AddFriend setModalVisible={setModalVisible} modalVisible={modalVisible} />
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -136,7 +107,67 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f4f4',
         borderRadius: 5
       },
-      input: {
+      centeredView: {
         flex: 1,
-      }  
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        width: '90%',
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },    
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      button: {
+        borderRadius: 20,
+        padding: 5,
+        elevation: 2,
+        justifyContent: 'center',
+        backgroundColor: '#2196F3',
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        fontSize: 20,
+        marginBottom: 15,
+        textAlign: 'center',
+      },
+      modalSearch: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+      },
+      input: {
+        borderRadius: 10,
+        height: 40,
+        width: 307,
+        marginBottom: 10,
+        padding: 10,
+        borderColor: '#e7e7e7',
+        color: '#7b8d93',
+        borderWidth: 1,
+      }, 
+      userSearchInfo: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 5
+      }
 })

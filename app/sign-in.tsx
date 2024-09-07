@@ -6,29 +6,22 @@ import ButtonComponent from "@/components/ButtonComponent";
 import { auth } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import { defaultStyles } from "@/constants/Styles";
+import { useUserStore } from "@/helperFunction/userStore";
 
 export default function LogInScreen({navigation}: any) {
-
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [warn, setWarn] = useState(null)
 
-
-    const { user, setUser } = useAuth()
-
     const isButtonDisabled = !email || password.length < 6
 
-    const onLogIn = async () => {
+    const handleLogIn = async () => {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // setUser()
-        console.log(userCredential);
-        setUser(JSON.stringify(user))
+        await signInWithEmailAndPassword(auth, email, password);
       } catch (error) {
-        console.log(error);
-        
+        setWarn(error.message)
       }
-      
     }
 
      return (
@@ -52,13 +45,13 @@ export default function LogInScreen({navigation}: any) {
         </KeyboardAvoidingView>
       </View>
 
-      {/* { warn && <View><Text style={{color: 'red', paddingBottom: 10}}>{warn}</Text></View>} */}
+      { warn && <View><Text style={{color: 'red', paddingBottom: 10}}>{warn}</Text></View>}
 
-      <View>
-        <TouchableOpacity onPress={() => onLogIn() } style={[styles.button, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
-          <Text style={styles.btnText}>LOG IN</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => handleLogIn() } style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
+        <Text style={styles.text}>NEXT</Text>
+      </TouchableOpacity>
+
+      
 
       <View style={styles.text}>
         <Pressable onPress={() => navigation.navigate("forgotPassword")} >
@@ -75,7 +68,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFF7F8',
-    padding: 20,
+    padding: 20
   },
   welcome: {
     marginTop: 120,
@@ -101,25 +94,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   text: {
-    marginBottom: 20,
-    color: '#7CA4FC',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
     textAlign: 'center',
+    fontFamily: 'Arial',
+    padding: 10
   },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 20,
+  btnColour: {
     backgroundColor: '#7CA4FC',
-    width: 320,
-    height: 45,
-    shadowColor: '#7CA4FC',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    marginBottom: 10,
   },
   btnText: {
     fontSize: 16,

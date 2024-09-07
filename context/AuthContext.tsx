@@ -9,49 +9,23 @@ export const AuthProvider = ({ children }: any) => {
   const [ user, setUser ] = useState<any>(null);  
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authenticatedUser:any) => { 
-      if (authenticatedUser) {
-        console.log('authenticatedUser: exists');
-        const uid = authenticatedUser.uid
-        setUser(uid)
-        storeData("user", uid)
-      } else {
-        console.log('authenticatedUser: null');
-        setUser(null)
-        storeData("user", '') 
+    const checkUser = async () => {
+      try {
+        const unsubscribe = onAuthStateChanged(auth, (authenticatedUser: any) => {
+          if (authenticatedUser) {
+            console.log(`authenticatedUser: exists`);
+            setUser(authenticatedUser);
+          } else {
+            console.log(`authenticatedUser: null`);
+            setUser(null);
+          }
+        });
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error checking user:", error);
       }
-
-    }) 
-    return () => unsubscribe()
-
-
-    // const checkUser = async () => {
-    //   try {
-    //     const storedUser = await getItemFor("user");
-    //     if (storedUser) {
-    //       console.log('checkUser(): user stored ');
-    //       const uid = JSON.parse(storedUser).uid
-    //       setUser(uid);
-    //     } 
-
-    //     const unsubscribe = onAuthStateChanged(auth, (authenticatedUser: any) => {
-    //       if (authenticatedUser) {
-    //         console.log(`authenticatedUser: exists`);
-    //         const uid = JSON.parse(authenticatedUser).uid
-    //         setUser(uid);
-    //         storeData("user", uid);
-    //       } else {
-    //       console.log(`authenticatedUser: null`);
-    //         setUser(null);
-    //         storeData("user", '');
-    //       }
-    //     });
-    //     return () => unsubscribe();
-    //   } catch (error) {
-    //     console.error("Error checking user:", error);
-    //   }
-    // };
-    // checkUser();
+    };
+    checkUser();
   }, []);
 
   const value = useMemo(() => ({ user, setUser }), [user]);

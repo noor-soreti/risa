@@ -1,11 +1,38 @@
 // import { CustomSwitch } from "@/components/CustomSwitch";
 // import { ToggleButton } from "@/components/ToggleButton";
-import { useState } from "react";
+import { db } from "@/firebase";
+import { useUserStore } from "@/helperFunction/userStore";
+import { collection, doc, getDoc, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Pressable, Image, Animated, TouchableOpacity } from "react-native";
 
 export default function CallList() {  
-    const [leftButtonActive, setLeftButtonActive] = useState(true)
+    const { currentUser }: any = useUserStore()
+    const [ calls, setCalls ] = useState([])
     const username = 'Jane Doe'
+
+    const getCalls = async () => {
+        try {
+            const docRef = doc(db, "userChats", currentUser.id);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                setCalls(docSnap.data())
+            } else {
+              // docSnap.data() will be undefined in this case
+              console.log("No such document!");
+            }
+        } catch (error) {
+            console.log(`callList error: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        getCalls()
+        console.log(calls);
+        
+    }, [])
+
     return(
         <View style={styles.container}>
             <View style={styles.toggleContainer}>

@@ -2,22 +2,17 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Text, View, StyleSheet, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from "react";
+import { ColorPalette } from "@/constants/Colors";
 
 export default function Message() {
     const navigation = useNavigation()
-    const [open, setOpen] = useState(false)
     const [inputText, setInputText] = useState('')
     const iconsTop = ['phone', 'camera', 'cog']
     const iconsBottom = ['plus', 'camera', 'image']
 
-    const handleEmoji = (e) => {
-        setInputText(prev=>prev+e)
-        setOpen(false)
-    }
-
     const handleHeaderOptions = (option: string) => {
         if (option == 'cog') {
-            navigation.navigate('chatSettings')
+            navigation.navigate('userInfo')
         } else {
             console.log("noo");
         }
@@ -113,17 +108,6 @@ export default function Message() {
 
                 <View style={styles.inputArea}>
                     <TextInput  value={inputText} onChangeText={setInputText} style={styles.input} placeholder="Aa" multiline={true}/>
-                    {/* <Pressable onPress={() => setOpen((prev)=>!prev)}>
-                        <AntDesign name="smileo" size={20} color="black" />
-                    </Pressable>
-                    <View style={styles.emoji}>
-                        { 
-                            open ?
-                                <EmojiModal style={styles.picker} onEmojiSelected={(emoji) => handleEmoji(emoji)} />
-                            :
-                                null
-                        }
-                    </View>  */}
                 </View>
 
                 <Pressable onPress={() => console.log('microphone')}>
@@ -147,7 +131,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderBottomWidth: 1,
-        borderBottomColor: "#1119270a",
+        borderBottomColor: ColorPalette.borderGrey,
         padding: 15
       }, 
       headerLeft:{

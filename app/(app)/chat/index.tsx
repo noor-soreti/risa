@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import { StyleSheet } from "react-native";
-import ChatList from "./chatList/messageList";
+import ChatList from "./chatList/chatList";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatScreen() {

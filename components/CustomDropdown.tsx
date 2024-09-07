@@ -1,30 +1,18 @@
-import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, FlatList, Pressable, Keyboard, Image, ScrollView } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { useUserStore } from "@/helperFunction/userStore";
+import { useEffect, useState } from "react";
+import { ColorPalette } from "@/constants/Colors";
 import mock from '../mock/channels.json'
-// import UserContacts from "./UserContacts";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as Contacts from 'expo-contacts';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+import FriendsDropdown from "./FriendsDropdown";
 
 export default function CustomDropdown(props: any) {
     const { channels, friends, groups, services, setChannels, setFriends, setGroups, setServices } = props
-    const [contacts, setContacts] = useState<any>([])
     const navigation = useNavigation()
-
-    useEffect(() => {
-      // (async () => {
-      //   const { status } = await Contacts.requestPermissionsAsync();
-      //   if (status === 'granted') {
-      //     const { data } = await Contacts.getContactsAsync({
-      //       fields: [Contacts.Fields.Emails],
-      //     });
-  
-      //     if (data.length > 0) {
-      //       const contact = data[0];
-      //     }
-      //     setContacts(data)
-      //   }
-      // })();
-    }, []);
 
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
@@ -89,18 +77,19 @@ export default function CustomDropdown(props: any) {
                     <Pressable onPress={() => toggleState(item.key)} style={styles.flatList}>
                       <Text style={styles.flatListItem}>{item.key}</Text>
                       <FontAwesome size={20} name={ item.state ? "caret-down" :"caret-left"} style={{color: '#626262'}} />
-                  </Pressable>
+                    </Pressable>
                   {
                     item.state ?
                     <View style={styles.dropDownItem}>
-                      <Pressable style={{alignSelf: 'flex-end'}} onPress={() => selectSeeAll(item.key)}>
-                        <Text style={{color: '#007aff'}}>
-                          See All
-                        </Text>
-                      </Pressable>
                       {
                       item.value == 'channels' ?
-                            <FlatList
+                        <>
+                          <Pressable style={{alignSelf: 'flex-end'}} onPress={() => selectSeeAll(item.key)}>
+                            <Text style={{color: '#007aff'}}>
+                              See All
+                            </Text>
+                          </Pressable>
+                           <FlatList
                             horizontal
                             style={styles.itemStyle}
                             data={channelArray}
@@ -110,20 +99,9 @@ export default function CustomDropdown(props: any) {
                             </Pressable>
                             }
                             />
+                        </>
                         : item.value == "friends" ?
-                        // <UserContacts contacts={contacts}/>
-                        <ScrollView style={styles.scrollView}>
-                          {
-                            Object.keys(contacts).map(contact => (
-                              <View style={styles.contact}>
-                                <Image style={styles.image} source={require('../assets/images/avatar.png')} />
-                                <View>
-                                  <Text> {contacts[contact]['name']} </Text>
-                                </View>
-                              </View>
-                            ))
-                          }
-                        // </ScrollView>
+                        <FriendsDropdown navigation={navigation} />
                         :
                         <Text>{item.value}</Text>
                       }
@@ -145,7 +123,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: "#1119270a",
+        borderBottomColor: ColorPalette.borderGrey,
         padding: 15,
         paddingTop: 10,
       },
@@ -173,14 +151,13 @@ const styles = StyleSheet.create({
         borderColor: "#e5e5e8",
         backgroundColor: "#e5e5e8", 
       },
-      scrollView: {
-      },
       contact: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 5,
-        borderBottomWidth: 1
+        padding: 10,
+        borderTopWidth: 1,
+        borderTopColor: ColorPalette.borderGrey,
       },
       image: {
         height: 50,

@@ -1,11 +1,27 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import NewMessage from "@/components/NewMessage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
+import { useUserStore } from "@/helperFunction/userStore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebase";
 
 export default function ChatList() {
     const [newMessage, setNewMessage] = useState(true)
     const navigation = useNavigation()
+    const { currentUser } = useUserStore()
+
+    useEffect(() => {
+        const unSub = onSnapshot(doc(db, "userChats", currentUser.id), async (res) => {
+            const items = res.data()?.chats
+            console.log(items)
+        })
+        return (() => 
+            unSub()
+        )
+        
+    }, [])
+    
 
     const onLinkPress = (screenName: string) => {
         navigation.navigate(screenName)

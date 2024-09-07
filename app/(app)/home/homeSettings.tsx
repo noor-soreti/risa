@@ -1,24 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { auth, db } from "@/firebase";
 import { deleteUser, signOut } from "firebase/auth";
-import { Pressable, SafeAreaView, StyleSheet, Text, Alert, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, Text, Alert, TouchableOpacity } from "react-native";
 import { defaultStyles } from "@/constants/Styles";
 import { deleteDoc, doc } from "firebase/firestore";
 
 export default function HomeSettings() {
-
-    const { setUser } = useAuth()
-
-
-    const signOut = async () => {
-        try {
-            await signOut(auth)
-            setUser(null)
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     const deleteAccount = async () => {
         const currentUser = auth.currentUser
         try {
@@ -33,12 +20,12 @@ export default function HomeSettings() {
         Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
             {
               text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
+              onPress: () => console.log('Pressed Cancel'),
               style: 'cancel',
             },
             {
                 text: 'Sign Out', 
-                onPress: signOut,
+                onPress: async () => await signOut(auth),
                 style: 'destructive'
             },
           ]);
@@ -48,7 +35,7 @@ export default function HomeSettings() {
         Alert.alert('Delete Account', 'Are you sure you want to delete your account? This action is not reversible', [
             {
               text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
+              onPress: () => console.log('Pressed Cancel'),
               style: 'cancel',
             },
             {
