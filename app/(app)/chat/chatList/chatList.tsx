@@ -6,7 +6,7 @@ import { useUserStore } from "@/helperFunction/userStore";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
-import { getUserChats } from "@/helperFunction/axiosApiFunctions";
+import { getUserChats } from "@/app/api/axiosApiFunctions";
 import ChatPreview from "@/components/ChatPreview";
 
 export default function ChatList() {

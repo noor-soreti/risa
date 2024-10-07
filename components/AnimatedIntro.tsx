@@ -30,7 +30,7 @@ const content = [
     fontColor: ColorPalette.fuchsia,
   },
   {
-    title: 'RISA',
+    title: "Let's RISA",
     bg: ColorPalette.white,
     fontColor: ColorPalette.tangerine,
   },

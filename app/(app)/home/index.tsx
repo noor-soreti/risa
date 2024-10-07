@@ -3,17 +3,20 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AddFriend from "@/components/AddFriendModal";
 import { StyleSheet } from "react-native";
 import { useState } from "react";
-import { useUserStore } from "@/helperFunction/userStore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {Alert, Image, Modal, Pressable, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function MainScreen({navigation}: any) {
   const [channels, setChannels] = useState(false)
   const [friends, setFriends] = useState(false)
   const [groups, setGroups] = useState(false)
   const [services, setServices] = useState(false)
-  const { currentUser }: any = useUserStore()
   const [modalVisible, setModalVisible] = useState(false);    
+  const { user } = useSelector((state) => state.user)
+
+  console.log(user);
+  
 
     return( 
         <SafeAreaView style={styles.container} >
@@ -35,13 +38,15 @@ export default function MainScreen({navigation}: any) {
             
 
             <View style={styles.headerContent}>
-              <Image 
+              <Image source={require('../../../assets/images/profile.png')} style={styles.image}/>
+              {/* <Image 
                   source={currentUser.avatar || require('../../../assets/images/profile.png')}
                   style={styles.image}
-              />
+              /> */}
               <View style={styles.userInfo}>
-                  <Text style={{fontSize: 20, fontWeight: 'bold'}}> {currentUser.displayName} </Text>
-                  <Text style={{color: '#7b7b92'}}> {currentUser.status} </Text>
+
+                  <Text style={{fontSize: 20, fontWeight: 'bold'}}> {user.fullName} </Text>
+                  <Text style={{color: '#7b7b92'}}> {user.status == null ? "Status" : user.status} </Text>
               </View>
             </View>
           </View>

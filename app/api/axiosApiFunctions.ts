@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.create({
+export const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.100.29:8080', // Replace with your local IP or production URL
     headers: {
         'Content-Type': 'application/json',

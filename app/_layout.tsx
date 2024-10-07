@@ -6,35 +6,30 @@ import HomeScreen from "./(app)/home";
 import Register from "./register";
 import IndexView from "./start";
 import SignIn from "./sign-in";
-import { auth } from "@/firebase";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { ActivityIndicator, View } from "react-native";
-import { useUserStore } from "@/helperFunction/userStore";
 import { NavigationContainer } from "@react-navigation/native";
-import { getItemFor, storeData } from "@/helperFunction/asyncStorageHelper";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import mock from '@/mock/user.json'
 import Inbox from "./(app)/home/inbox/inbox";
-import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { Provider, useSelector } from "react-redux";
+import { store } from "./api/store";
+import { AuthProvider } from "@/context/AuthContext";
 
 const HAS_LAUNCHED = false
 
 export default function RootLayout() {
 
   return (
-    // <Provider store={store}>
+    <Provider store={store}>
       <NavigationContainer independent={true}>
         <AppNavigator />
       </NavigationContainer>
-    // </Provider>
+    </Provider>
   );
 }
 
 function AppNavigator () {
   const Stack = createNativeStackNavigator();
   const currentUser = false
+  const { user, loading } = useSelector((state) => state.user)
   // const { currentUser, isLoading, fetchUserInfo }: any = useUserStore()
 
   // useEffect(() => {
@@ -67,7 +62,7 @@ function AppNavigator () {
 
   return (
     <Stack.Navigator>
-      { currentUser ?
+      { user !== null ?
         <>
           <Stack.Screen
             name="tab"

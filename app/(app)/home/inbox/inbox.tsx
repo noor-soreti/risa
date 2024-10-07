@@ -1,5 +1,5 @@
 import { ColorPalette } from "@/constants/Colors";
-import { getUserNotifications } from "@/helperFunction/axiosApiFunctions";
+import { getUserNotifications } from "@/app/api/axiosApiFunctions";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";

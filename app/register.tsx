@@ -10,39 +10,42 @@ import * as ImagePicker from 'expo-image-picker';
 import { defaultStyles } from "@/constants/Styles";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useUserStore } from "@/helperFunction/userStore";
-import { getUserById, getAllUsers, registerUser } from "@/helperFunction/axiosApiFunctions";
+// import { getUserById, registerUser } from "@/app/api/axiosApiFunctions";
 import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "./api/userThunk";
 
 export default function Register({navigation}: any) { 
-  const [email, setEmail] = useState('ee@mail.com')
+  const [email, setEmail] = useState('matt.berry@gmail.com')
   const [password, setPassword] = useState('test123')
   const [confirmPassword, setConfirmPassword] = useState('test123')
-  const [fullName, setFullName] = useState('name')
+  const [fullName, setFullName] = useState('Matt Berry')
   const [image, setImage] = useState<string | null>(null);
   const [warn, setWarn] = useState('')
-  const [ loading, setLoading ] = useState(false)
-  const { currentUser }: any = useUserStore()
+  const { user, loading, error } = useSelector((state)=> state.user)
+  const dispatch = useDispatch()
 
   const isButtonDisabled = !email || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName
 
-  const getUsers = async () => {
-    const fetchData = async () => {
-      try {
-          const userData = await registerUser({email, password, fullName});
-          if (userData == null) {
-            Toast.show({
-              type: 'error',
-              visibilityTime: 5000,
-              text1: 'Woops!',
-              text2: `This email already seems to be registered`
-            })
-          }
+  const handleSubmit = async () => {
+    dispatch(registerUser({email, password, fullName}))
+    // const fetchData = async () => {
+    //   try {
+    //       const userData = await registerUser({email, password, fullName});
+    //       if (userData == null) {
+    //         Toast.show({
+    //           type: 'error',
+    //           visibilityTime: 5000,
+    //           text1: 'Woops!',
+    //           text2: `This email already seems to be registered`
+    //         })
+    //       }
 
-      } catch (error) {
-          console.error("Error fetching user data", error);
-      }
-    };
-    fetchData();
+    //   } catch (error) {
+    //       console.error("Error fetching user data", error);
+    //   }
+    // };
+    // fetchData();
   }
 
   const uploadImage = async () => {
@@ -72,7 +75,7 @@ export default function Register({navigation}: any) {
   };
 
   const handleRegister = async () => {
-    setLoading(true)
+    // setLoading(true)
     if (password === confirmPassword) {            
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -97,7 +100,7 @@ export default function Register({navigation}: any) {
     } else {
       setWarn("Passwords must match")
     }
-    setLoading(false)
+    // setLoading(false)
   }
 
     return (
@@ -133,7 +136,7 @@ export default function Register({navigation}: any) {
 
           { warn && <View><Text style={{color: 'red'}}>{warn}</Text></View>}
             
-          <TouchableOpacity onPress={() => handleRegister() } style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
+          <TouchableOpacity onPress={() => handleSubmit() } style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
             <Text style={styles.text}>{ loading ? "Loading.." : "NEXT"}</Text>
           </TouchableOpacity>
 

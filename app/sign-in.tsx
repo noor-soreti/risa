@@ -5,23 +5,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { defaultStyles } from "@/constants/Styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { View, StyleSheet, Text, Pressable, KeyboardAvoidingView, TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "./api/userThunk";
 
 export default function LogInScreen({navigation}: any) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('matt.berry@gmail.com')
+    const [password, setPassword] = useState('test123')
     const [warn, setWarn] = useState(null)
-    const [loading, setLoading] = useState(false)    
+    const { user, loading, error } = useSelector((state) => state.user)
+    const dispatch = useDispatch() 
 
     const isButtonDisabled = !email || password.length < 6
 
-    const handleLogIn = async () => {
-      setLoading(true)
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        setWarn(error.message)
-      }
-      setLoading(false)
+    const handleSubmit = async () => {
+      dispatch(loginUser({email, password}))
     }
 
      return (
@@ -47,7 +44,7 @@ export default function LogInScreen({navigation}: any) {
 
       { warn && <View><Text style={{color: 'red', paddingBottom: 10}}>{warn}</Text></View>}
 
-      <TouchableOpacity onPress={handleLogIn} style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
+      <TouchableOpacity onPress={handleSubmit} style={[defaultStyles.btn, styles.btnColour, isButtonDisabled && styles.disabled]} disabled={isButtonDisabled}>
         <Text style={styles.text}>{ loading ? "Loading.." : "NEXT"}</Text>
       </TouchableOpacity>      
 
