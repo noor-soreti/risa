@@ -31,8 +31,8 @@ const content = [
   },
   {
     title: 'RISA',
-    bg: ColorPalette.purple,
-    fontColor: ColorPalette.white,
+    bg: ColorPalette.white,
+    fontColor: ColorPalette.tangerine,
   },
 ];
 

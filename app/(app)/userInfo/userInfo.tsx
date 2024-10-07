@@ -1,11 +1,12 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { StyleSheet, Text, View, Pressable, Image, Button, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, Pressable, Image, Button, SafeAreaView, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
-import { collection, doc, getDoc, query, setDoc, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUserStore } from "@/helperFunction/userStore";
+import { StatusBar } from "expo-status-bar";
 
 // 57:50
 export default function UserInfo(props: any) {
@@ -15,9 +16,8 @@ export default function UserInfo(props: any) {
     const [photos, setPhotos] = useState(false)
     const [files, setFiles] = useState(false)
     const settingsList = ['Chat Settings', 'Privacy & Help', 'Shared Photos', 'Shared Files']
-    const navigation = useNavigation()    
-
-    const { currentUser } = useUserStore()
+    const navigation = useNavigation()        
+    const { currentUser, getUserChats }: any = useUserStore()
 
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
@@ -39,39 +39,20 @@ export default function UserInfo(props: any) {
     }
 
     const handleMessage = async () => {
-      // check if `currentUser` has userChats with selectedUser
-      try {
-        console.log(userInfo);
-      } catch (error) {
-        console.log(`handleMessage: ${error}`)
+      const userChats = await getUserChats(currentUser)
+      if (userChats) {        
+        for (let i = 0; i < userChats.data()?.chats.length; i++) {
+          if (userChats.data()?.chats[i].receiverId == userInfo.id) {
+            navigation.navigate('message', {chatId: userChats.data()?.chats[i].chatId})
+          } 
+        }
+      } else {
+        console.log('null');
       }
-      // const unSub = await setDoc(doc(db, "userChats", currentUser.id), {
-      //   name: "Los Angeles",
-      //   state: "CA",
-      //   country: "USA"
-      // });
-
-      // return (() => unSub)
     }
 
     const handleCall = async () => {
-      console.log(currentUser.id);
-      console.log(userInfo);
-      
-      
-      try {
-        const docRef = doc(db, "userCalls", currentUser.id);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.log(`handleMessage: ${error}`)
-      }
+     console.log('call');
     }
 
     return (
@@ -86,7 +67,7 @@ export default function UserInfo(props: any) {
             </View>
             <View style={styles.body}>
                 <View style={styles.userInfo}>
-                    <Image source={require('../../../assets/images/avatar.png')} style={styles.image} />
+                    <Image source={require('../../../assets/images/profile.png')} style={styles.image} />
                     <View style={styles.textInfo}>
                         <Text style={{fontSize: 25, fontWeight: 600}} >{userInfo.displayName}</Text>
                         <Text style={{fontSize: 15}} >Feeling happy</Text>
@@ -108,7 +89,7 @@ export default function UserInfo(props: any) {
                     {
                         settingsList.map((list) => {
                             return(
-                            <Pressable style={styles.settingsOptions} onPress={() => console.log(list)}>
+                            <Pressable style={styles.settingsOptions} onPress={() => console.log(list)} key={list}>
                                 <Text style={styles.settingsText} >{list}</Text>
                                 <View style={styles.caret}>
                                     <FontAwesome  name="caret-up" size={15} />
@@ -130,7 +111,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: 10,
         flex: 1,
-        backgroundColor: '#f7f5f5',
+        backgroundColor: ColorPalette.lightGrey,
+        paddingTop: Platform.OS === "android" ? 30 : 0
       },
       header: {
         display: 'flex',
@@ -162,7 +144,6 @@ const styles = StyleSheet.create({
       image: {
         width: 100, 
         height: 100, 
-        backgroundColor: '#7CA4FC',
         borderRadius: 50,
         cursor: 'pointer'
     },

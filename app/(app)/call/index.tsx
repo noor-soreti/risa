@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { SafeAreaView, Text, View } from "react-native";
+import { Platform, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import CallList from "./callList/callList";
 
@@ -20,5 +20,6 @@ const styles = StyleSheet.create({
         gap: 10,
         flex: 1,
         backgroundColor: '#FFFFFF',
+        paddingTop: Platform.OS == "android" ? 30: 0
       }
 })

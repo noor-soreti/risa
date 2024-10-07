@@ -9,6 +9,7 @@ import * as Contacts from 'expo-contacts';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import FriendsDropdown from "./FriendsDropdown";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function CustomDropdown(props: any) {
     const { channels, friends, groups, services, setChannels, setFriends, setGroups, setServices } = props
@@ -102,7 +103,12 @@ export default function CustomDropdown(props: any) {
                         </>
                         : item.value == "friends" ?
                         <FriendsDropdown navigation={navigation} />
-                        :
+                        : item.value == "groups" ?
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                          <Ionicons name="sad-outline" size={50}/>
+                          <Text>No Groups Yet!</Text>
+                      </View>
+                        : 
                         <Text>{item.value}</Text>
                       }
                     </View>

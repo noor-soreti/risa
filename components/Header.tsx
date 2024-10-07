@@ -10,7 +10,7 @@ export default function Header(props: any) {
             <View style={styles.headerOptions}>
             {
                 icons.map((name) => (
-                    <Pressable onPress={() => console.log(name)}>
+                    <Pressable onPress={() => console.log(name)} key={name}>
                         <FontAwesome name={name} size={20}/>
                     </Pressable>
                 ))

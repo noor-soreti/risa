@@ -20,9 +20,12 @@ export const defaultStyles = StyleSheet.create({
   },
   pageContainer: {
     flex: 1,
-    backgroundColor: ColorPalette.light,
+    backgroundColor: ColorPalette.white,
   },
   loadingBtn: {
     
+  },
+  androidSafeAreaView: {
+    paddingTop: 30
   }
 });

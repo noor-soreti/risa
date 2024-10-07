@@ -1,27 +1,61 @@
 import { useState } from "react";
-import { View, Text, Pressable, TextInput, Button, KeyboardAvoidingView, Image, TouchableOpacity } from "react-native";
+import { View, Text, Button, KeyboardAvoidingView, Image, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import InputBox from "@/components/InputBox";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db, storage } from "@/firebase";
-import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
-import upload from "@/helperFunction/upload";
-import { ref } from "firebase/storage";
 import { defaultStyles } from "@/constants/Styles";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useUserStore } from "@/helperFunction/userStore";
+import { getUserById, getAllUsers, registerUser } from "@/helperFunction/axiosApiFunctions";
+import Toast from "react-native-toast-message";
 
 export default function Register({navigation}: any) { 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [name, setName] = useState('')
+  const [email, setEmail] = useState('ee@mail.com')
+  const [password, setPassword] = useState('test123')
+  const [confirmPassword, setConfirmPassword] = useState('test123')
+  const [fullName, setFullName] = useState('name')
   const [image, setImage] = useState<string | null>(null);
   const [warn, setWarn] = useState('')
   const [ loading, setLoading ] = useState(false)
+  const { currentUser }: any = useUserStore()
 
-  const isButtonDisabled = !email || password.length < 6 || confirmPassword.length < 6 || !name
+  const isButtonDisabled = !email || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName
+
+  const getUsers = async () => {
+    const fetchData = async () => {
+      try {
+          const userData = await registerUser({email, password, fullName});
+          if (userData == null) {
+            Toast.show({
+              type: 'error',
+              visibilityTime: 5000,
+              text1: 'Woops!',
+              text2: `This email already seems to be registered`
+            })
+          }
+
+      } catch (error) {
+          console.error("Error fetching user data", error);
+      }
+    };
+    fetchData();
+  }
+
+  const uploadImage = async () => {
+    const storageRef = ref(storage, `images/${image}`)
+    console.log(storageRef);
+
+    try {
+      await uploadBytes(storageRef, image)
+      const url = await getDownloadURL(storageRef)
+    } catch (e) {
+      console.log(`register.tsx - uploadImage: ${e}`);
+    }
+  }
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -31,11 +65,9 @@ export default function Register({navigation}: any) {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
-
+    
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      console.log(result.assets[0].uri);
+      setImage(result.assets[0].uri)
     }
   };
 
@@ -44,11 +76,11 @@ export default function Register({navigation}: any) {
     if (password === confirmPassword) {            
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const imageUrl = await upload(image)
+        await uploadImage(image)
         await setDoc(doc(db, "users", userCredential.user.uid), {
-          displayName: name,
+          displayName: fullName,
           email,
-          avatar: imageUrl,
+          avatar: image,
           status: 'Feeling Happy',
           friends: [],
           id: userCredential.user.uid})
@@ -61,7 +93,6 @@ export default function Register({navigation}: any) {
       } catch (e) {
         console.log(e.message);
         setWarn(e.message)
-      } finally {
       }
     } else {
       setWarn("Passwords must match")
@@ -86,7 +117,7 @@ export default function Register({navigation}: any) {
           <Button title="Pick an image from camera roll" onPress={pickImage} />
           { image && <Image source={{ uri: image}} style={styles.image} />}
           {!image && <Image 
-              source={require('../assets/images/user-profile.png')}
+              source={require('../assets/images/profile.png')}
               style={styles.image}
           />}
 
@@ -96,7 +127,7 @@ export default function Register({navigation}: any) {
               <InputBox placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" />
               <InputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
               <InputBox placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true}/>
-              <InputBox placeholder="Full Name" value={name} onChangeText={setName} autoCapitalize="words"/>
+              <InputBox placeholder="Full Name" value={fullName} onChangeText={setFullName} autoCapitalize="words"/>
             </KeyboardAvoidingView>
           </View>
 
@@ -116,6 +147,7 @@ export default function Register({navigation}: any) {
                   Don't have a local number?
               </Text>
           </View>
+          <Toast/>
         </View>
     )
 }
@@ -181,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   btnColour: {
-    backgroundColor: '#7CA4FC',
+    backgroundColor: '#1E90FF',
   },
   text: {
     fontSize: 16,

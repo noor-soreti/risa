@@ -2,9 +2,7 @@ import { storage } from "@/firebase";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const upload = async (file: any) => {
-    const storageRef = ref(storage, file);
-    console.log(`file: ${file}`);
-    console.log(`storageRef: ${storageRef}`);
+    const storageRef = ref(storage, file);   
     const uploadTask = uploadBytesResumable(storageRef, file);
     return new Promise((resolve, reject) => {
         uploadTask.on('state_changed', 
@@ -17,7 +15,10 @@ const upload = async (file: any) => {
         }, 
         () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                console.log('getDownloadURL');
                 resolve(downloadURL)
+            }).catch(e => {
+                console.log('getDownloadURL error: ${e');
             });
         }
         );

@@ -1,22 +1,65 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Text, View, StyleSheet, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
+import { Text, View, StyleSheet, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView, Keyboard } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { useUserStore } from "@/helperFunction/userStore";
 
-export default function Message() {
+export default function Message(props: any) {
+    const iconsTop = ['phone', 'camera', 'cog']
+    const iconsBottom = ['camera', 'image']
     const navigation = useNavigation()
     const [inputText, setInputText] = useState('')
-    const iconsTop = ['phone', 'camera', 'cog']
-    const iconsBottom = ['plus', 'camera', 'image']
+    const [ messages, setMessages ] = useState([])
+    const [ userInfo, setUserInfo ] = useState()
+    const [ keyboardShown, setKeyboardShown ] = useState(false)
+    const { chatId } = props.route.params    
+    
+    useEffect(() => {
+
+        const test = async () => {
+            const chatRef = doc(db, 'chats', chatId)
+            const chatSnap = await getDoc(chatRef)
+            console.log(chatSnap.data());
+        }
+
+        test()
+
+        // const unsub = async () => {
+            // listen to meta data changes: { includeMetadataChanges: true }, 
+        //     const chatRef = onSnapshot(doc(db, 'chats', chatId), { includeMetadataChanges: true }, (doc) => {
+        //         // listen on local writes:
+        //         const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        //         console.log(source, " data: ", doc.data());
+        //         setMessages(doc.data()?.messages)
+        //     })
+        // }
+        // unsub()
+    }, [])
 
     const handleHeaderOptions = (option: string) => {
         if (option == 'cog') {
-            navigation.navigate('userInfo')
+            navigation.navigate('userInfo', userInfo)
         } else {
-            console.log("noo");
+            console.log(option);
         }
-        // navigation.navigate(option)
+    }
+
+    const handleSendMessage = async () => {
+        // console.log('send message');
+        const chatRef = doc(db, 'chats', chatId)
+        const chatSnap = await updateDoc(chatRef, {
+            messages: arrayUnion(inputText)
+        })
+
+        const chatDocSnap = await getDoc(chatRef)
+
+
+        console.log(chatDocSnap.data())
+        setInputText('')
     }
 
     return (
@@ -26,12 +69,12 @@ export default function Message() {
                     <Pressable onPress={() => navigation.goBack()}>
                         <FontAwesome name="angle-left" size={20} />
                     </Pressable>
-                    <Text style={{fontWeight: 'bold', fontSize: 17}} >Emily Grant</Text>
+                    <Text style={{fontWeight: 'bold', fontSize: 17}}> Emily Grant </Text>
                 </View>
                 <View style={styles.headerOptions}>
                     {
                         iconsTop.map(name => (
-                            <Pressable onPress={() => handleHeaderOptions(name)}>
+                            <Pressable onPress={() => handleHeaderOptions(name)} key={name}>
                                 <FontAwesome name={name} size={20}/>
                             </Pressable>
                         ))
@@ -42,72 +85,99 @@ export default function Message() {
             <KeyboardAvoidingView 
                 style={{flex: 1}} 
                 behavior={Platform.OS === "ios" ? "height" : undefined}
-                keyboardVerticalOffset={60}
+                keyboardVerticalOffset={80}
                 >
-                <ScrollView style={styles.center}>
+                    {
+                        messages.length == 0 
+                        ? 
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 10}}>
+                                <Ionicons name="sad-outline" size={50}/>
+                                <Text>No messages between you and X yet!</Text>
+                            </View>
+                        :
+                        <ScrollView style={styles.center}>
 
-                    <View style={[styles.messageContainer, styles.senderMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+                        <View style={[styles.messageContainer, styles.senderMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-                    <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+    
+                        <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-
-                    <View style={[styles.messageContainer, styles.senderMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+    
+    
+                        <View style={[styles.messageContainer, styles.senderMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-                    <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+    
+                        <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-
-                    <View style={[styles.messageContainer, styles.senderMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+    
+    
+                        <View style={[styles.messageContainer, styles.senderMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:43pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-                    <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
-                        <View style={{display: 'flex'}}>
-                            <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
-                            <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+    
+                        <View style={[styles.messageContainer, styles.receiverMessageContainer]}>
+                            <View style={{display: 'flex'}}>
+                                <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat itaque quos unde debitis voluptatum maxime tenetur similique consequuntur ipsa expedita quisquam molestiae earum eum, provident eveniet molestias saepe doloribus doloremque?</Text>
+                                <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 12}}>1:55pm</Text>
+                            </View>
                         </View>
-                    </View>
-
-
-                </ScrollView>
-
+                    </ScrollView>
+                    }
             </KeyboardAvoidingView>
             
-             <View style={styles.bottom}>
-                <View style={styles.bottomLeft}>
-                    {
-                        iconsBottom.map(name => (
-                            <Pressable onPress={() => console.log(name)}>
-                                <FontAwesome name={name} size={20}/>
-                            </Pressable>
-                        ))
-                    }
-                </View>
+            <View style={styles.bottom}>
+                {
+                    inputText.length <= 0 
+                    ?
+                        <View style={styles.bottomLeft}>
+                            {
+                                iconsBottom.map(name => (
+                                    <Pressable onPress={() => console.log(name)}>
+                                        <FontAwesome name={name} size={20}/>
+                                    </Pressable>
+                                ))
+                            }
+                        </View>
+                    :
+                        <Pressable onPress={() => console.log('plus')}>
+                            <FontAwesome name='plus' size={20}/>
+                        </Pressable>
+                }
 
                 <View style={styles.inputArea}>
-                    <TextInput  value={inputText} onChangeText={setInputText} style={styles.input} placeholder="Aa" multiline={true}/>
+                    <TextInput 
+                        value={inputText} 
+                        onChangeText={setInputText} 
+                        style={styles.input}
+                        placeholder="Aa" 
+                        multiline
+                    />
+                    {
+                        inputText.length != 0 &&
+                        <Pressable onPress={handleSendMessage}>
+                            <Ionicons name="send-sharp" size={20}/>
+                        </Pressable>
+
+                    }
                 </View>
 
                 <Pressable onPress={() => console.log('microphone')}>
@@ -166,7 +236,11 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         alignItems: 'center',
-        maxHeight: 100,
+        maxHeight: 500,
+        borderTopWidth: 1,
+        borderTopColor: ColorPalette.borderGrey,
+        paddingTop: 10
+        // backgroundColor: ColorPalette.lightGrey
       },
       bottomLeft: {
         display: 'flex',
@@ -182,7 +256,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f4f4',
         marginLeft: 10,
         marginRight: 10,
-        height: 40,
+        minHeight: 40,
         borderRadius: 20,
         padding: 10,
         maxHeight:100,

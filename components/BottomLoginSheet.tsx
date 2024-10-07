@@ -12,7 +12,7 @@ const BottomLoginSheet = ({navigation}) => {
   return (
     <View style={[styles.container, { paddingBottom: bottom }]}>
         <TouchableOpacity style={[defaultStyles.btn, styles.btnDark]} onPress={() => navigation.navigate('register')}>
-          <Ionicons name="mail" size={20} style={styles.btnIcon} color={ColorPalette.light}/>
+          <Ionicons name="mail" size={20} style={styles.btnIcon} color={ColorPalette.white}/>
           <Text style={styles.btnDarkText}>Register with Email</Text>
         </TouchableOpacity>
 

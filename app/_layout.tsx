@@ -15,49 +15,55 @@ import { NavigationContainer } from "@react-navigation/native";
 import { getItemFor, storeData } from "@/helperFunction/asyncStorageHelper";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import mock from '@/mock/user.json'
+import Inbox from "./(app)/home/inbox/inbox";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 const HAS_LAUNCHED = false
 
 export default function RootLayout() {
 
   return (
-    // <AuthProvider>
+    // <Provider store={store}>
       <NavigationContainer independent={true}>
         <AppNavigator />
       </NavigationContainer>
-    // </AuthProvider>
+    // </Provider>
   );
 }
 
 function AppNavigator () {
   const Stack = createNativeStackNavigator();
-  const { currentUser, isLoading, fetchUserInfo }: any = useUserStore()
-  // console.log(currentUser)
+  const currentUser = false
+  // const { currentUser, isLoading, fetchUserInfo }: any = useUserStore()
 
-  useEffect(() => {
-    const test = async () => {
-      const getItem = await getItemFor('HAS_LAUNCHED')
-      if ( getItem == 'false' ) {
-        console.log('HAS_LAUNCHED: false')
-      } else {
-        console.log('true');
-      }
-    }
-    test()
+  // useEffect(() => {
+  //   // const launched = async () => {
+  //   //   const getItem = await getItemFor('HAS_LAUNCHED')
+  //   //   if ( getItem == 'false' ) {
+  //   //     console.log('HAS_LAUNCHED: false')
+  //   //   } else {
+  //   //     console.log('true');
+  //   //   }
+  //   // }
+  //   // launched()
     
-    const unSubscribe = onAuthStateChanged(auth, (user => {
-      fetchUserInfo(user?.uid)
-    }))
-    return () => {
-      unSubscribe()
-    }
-  }, [fetchUserInfo]) 
+  //   const unSubscribe = onAuthStateChanged(auth, (user => {
+  //     fetchUserInfo(user?.uid)
+  //     console.log(user?.uid);
+      
+  //     console.log(`onAuthStateChanged - currentUser: ${JSON.stringify(currentUser)}`)
+  //   }))
+  //   return () => {
+  //     unSubscribe()
+  //   }
+  // }, [fetchUserInfo]) 
 
-  if (isLoading) return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size='large' color='blue'/>
-      </View>
-    )
+  // if (isLoading) return (
+  //     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+  //       <ActivityIndicator size='large' color='blue'/>
+  //     </View>
+  //   )
 
   return (
     <Stack.Navigator>
@@ -94,6 +100,13 @@ function AppNavigator () {
           <Stack.Screen
             name="userInfo"
             component={UserInfo}
+            options={{
+              headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="inbox"
+            component={Inbox}
             options={{
               headerShown: false
             }}

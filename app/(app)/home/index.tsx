@@ -13,7 +13,7 @@ export default function MainScreen({navigation}: any) {
   const [groups, setGroups] = useState(false)
   const [services, setServices] = useState(false)
   const { currentUser }: any = useUserStore()
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);    
 
     return( 
         <SafeAreaView style={styles.container} >
@@ -22,6 +22,9 @@ export default function MainScreen({navigation}: any) {
               {/* <Pressable onPress={() => setIsSearchSelected(prev=>!prev)}>
                 <FontAwesome size={20} name="search" />
               </Pressable> */}
+              <Pressable onPress={() => navigation.navigate('inbox')}>
+                <FontAwesome size={20} name="inbox" />
+              </Pressable>
               <Pressable onPress={() => setModalVisible(prev=>!prev)}>
                 <FontAwesome size={20} name="user-plus" />
               </Pressable>
@@ -29,10 +32,11 @@ export default function MainScreen({navigation}: any) {
                 <FontAwesome size={20} name="cog" />
               </Pressable>
             </View>
+            
 
             <View style={styles.headerContent}>
               <Image 
-                  source={currentUser.avatar || require('../../../assets/images/avatar.png')}
+                  source={currentUser.avatar || require('../../../assets/images/profile.png')}
                   style={styles.image}
               />
               <View style={styles.userInfo}>
@@ -43,6 +47,7 @@ export default function MainScreen({navigation}: any) {
           </View>
           
           <CustomDropdown {...{channels, friends, groups, services, setChannels, setFriends, setGroups, setServices}} />
+
 
           <Modal
               animationType="slide"
@@ -85,9 +90,7 @@ const styles = StyleSheet.create({
       image: {
         width: 60, 
         height: 60, 
-        backgroundColor: '#7CA4FC',
         borderRadius: 30,
-        cursor: 'pointer'
       },
       userInfo: {
         paddingLeft:10
@@ -169,5 +172,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         padding: 5
-      }
+      },
+      blurContainer: {
+        flex: 1,
+        padding: 20,
+        margin: 16,
+        textAlign: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        borderRadius: 20,
+      },
 })

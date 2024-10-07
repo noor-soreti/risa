@@ -40,16 +40,21 @@ export default function CallList() {
 
             {/* change to ListView */}
             <View style={styles.callList}>
-                <Pressable onPress={() => console.log(`calling ${username}`)} style={styles.callItem}>
-                    <View style={styles.callerInfo}>
-                        <Image source={require('../../../../assets/images/avatar.png')} style={styles.image} />
-                        <Text style={{marginLeft: 15, fontWeight: 600}}>Jane Doe</Text>
-                    </View>
-                    <View style={styles.callInfo}>
-                        <Text>Today</Text>
-                        <Text style={{color: 'red'}} >Incomming</Text>
-                    </View>
-                </Pressable>
+                {
+                    calls ?
+                    <Pressable onPress={() => console.log(`calling ${username}`)} style={styles.callItem}>
+                        <View style={styles.callerInfo}>
+                            <Image source={require('../../../../assets/images/profile.png')} style={styles.image} />
+                            <Text style={{marginLeft: 15, fontWeight: 600}}>Jane Doe</Text>
+                        </View>
+                        <View style={styles.callInfo}>
+                            <Text>Today</Text>
+                            <Text style={{color: 'red'}} >Incomming</Text>
+                        </View>
+                    </Pressable>
+                    : 
+                    <Text>NO CALLS</Text>
+                }
             </View>
         </View>
     )
@@ -96,7 +101,6 @@ const styles = StyleSheet.create({
     image: {
         width: 40, 
         height: 40, 
-        backgroundColor: '#7CA4FC',
         borderRadius: 30,
         cursor: 'pointer'
     },
