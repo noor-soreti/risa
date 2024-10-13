@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import api from "./axiosApiFunctions";
+import {api, registerUser} from "../../axiosApiFunctions";
 
 /*
 createAsyncThunk 
@@ -17,37 +17,31 @@ export const loginUser = createAsyncThunk(
     async ({...userData} : any, {rejectWithValue}) => {
         try {
             const response = await api.post('/api/user/login', userData)
-            if (response.status != 200) {
-                throw new Error("Failed to login")
-            }
             console.log(response.data);
             return response.data
-        } catch (error : any) {
-            if (error.status == 409) {
-                console.log("409");
-            }
-            console.log(error);
-            return null
+        } catch (error) {
+            console.log(error.status);
+            return rejectWithValue(error)
         }
     }
 )
 
 // thunk to handle user signup
-export const registerUser = createAsyncThunk(
+export const register = createAsyncThunk(
     'user/registerUser',
     async ({...userData} : any, {rejectWithValue}) => {
         try {
             const response = await api.post('/api/user/register', userData)
-            if (response.status != 200) {
-                throw new Error("Failed to register user")
-            }
+            // if (response.status != 200) {
+            //     throw new Error("Failed to register user")
+            // }
+            console.log(response.data);
+            
             return response.data
-        } catch (error : any) {
-            if (error.status == 409) {
-                console.log(error);
-                return null
-            }
-            return null
+        } catch (error : any) {            
+            // console.log(error)
+            // return error.status
+            return rejectWithValue(error.status)
         }
     }
 )

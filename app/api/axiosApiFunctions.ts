@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.100.29:8080', // Replace with your local IP or production URL
+    baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.100.29:8080',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -52,4 +52,19 @@ export const postMessage = async (messageData: object) => {
     }
 };
 
-export default api;
+export const postImage = async (imageData: any) => {
+    try {
+      const response = await api.post('/api/imagedata'
+        , imageData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+
+// export default api;

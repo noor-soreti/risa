@@ -4,8 +4,15 @@ import { deleteUser, signOut } from "firebase/auth";
 import { SafeAreaView, StyleSheet, Text, Alert, TouchableOpacity } from "react-native";
 import { defaultStyles } from "@/constants/Styles";
 import { deleteDoc, doc } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/app/api/features/users/userReducer";
+
 
 export default function HomeSettings() {
+    const dispatch = useDispatch()
+    const { user, loading, error } = useSelector((state)=> state.user)
+    console.log(user);
+    
     const deleteAccount = async () => {
         const currentUser = auth.currentUser
         try {
@@ -25,7 +32,7 @@ export default function HomeSettings() {
             },
             {
                 text: 'Sign Out', 
-                onPress: async () => await signOut(auth),
+                onPress: () => dispatch(logout()),
                 style: 'destructive'
             },
           ]);

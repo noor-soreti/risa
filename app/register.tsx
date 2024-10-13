@@ -9,102 +9,97 @@ import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { defaultStyles } from "@/constants/Styles";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useUserStore } from "@/helperFunction/userStore";
-// import { getUserById, registerUser } from "@/app/api/axiosApiFunctions";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "./api/userThunk";
+import { postImage } from "./api/axiosApiFunctions";
+import * as FileSystem from 'expo-file-system';
+import { register } from "./api/features/users/userThunk";
 
 export default function Register({navigation}: any) { 
-  const [email, setEmail] = useState('matt.berry@gmail.com')
+  const [phoneNumber, setPhoneNUmber] = useState('555-555-1234')
   const [password, setPassword] = useState('test123')
   const [confirmPassword, setConfirmPassword] = useState('test123')
   const [fullName, setFullName] = useState('Matt Berry')
-  const [image, setImage] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const [warn, setWarn] = useState('')
   const { user, loading, error } = useSelector((state)=> state.user)
   const dispatch = useDispatch()
-
-  const isButtonDisabled = !email || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName
-
+  const isButtonDisabled = !phoneNumber || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName  
+  
+  console.log(error);
+  
   const handleSubmit = async () => {
-    dispatch(registerUser({email, password, fullName}))
-    // const fetchData = async () => {
-    //   try {
-    //       const userData = await registerUser({email, password, fullName});
-    //       if (userData == null) {
-    //         Toast.show({
-    //           type: 'error',
-    //           visibilityTime: 5000,
-    //           text1: 'Woops!',
-    //           text2: `This email already seems to be registered`
-    //         })
-    //       }
-
-    //   } catch (error) {
-    //       console.error("Error fetching user data", error);
-    //   }
-    // };
-    // fetchData();
-  }
-
-  const uploadImage = async () => {
-    const storageRef = ref(storage, `images/${image}`)
-    console.log(storageRef);
-
-    try {
-      await uploadBytes(storageRef, image)
-      const url = await getDownloadURL(storageRef)
-    } catch (e) {
-      console.log(`register.tsx - uploadImage: ${e}`);
+    const status = await dispatch(register({fullName, phoneNumber, password}))
+    if (status.payload == 409) {
+      Toast.show({
+        type: 'error',
+        visibilityTime: 5000,
+        text1: 'Woops!',
+        text2: `This phone number seems to already be registered`
+      })
+    // let uriParts = imageUri?.split(".")
+    // let fileType = uriParts[uriParts?.length - 1]
+    // let formData = new FormData()
+    // formData.append('photo', {
+    //   imageUri,
+    //   name: `photo.${fileType}`,
+    //   type: `image/${fileType}`
+    // })
+    // try {
+    //   console.log(formData._parts);
+    //   let t = postImage(formData) 
+    // } catch (error) {
+    //   throw error
+    // }
     }
   }
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+    // According to Expo doc: permissions request NOT necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
     
     if (!result.canceled) {
-      setImage(result.assets[0].uri)
+      setImageUri(result.assets[0].uri)
     }
   };
 
-  const handleRegister = async () => {
-    // setLoading(true)
-    if (password === confirmPassword) {            
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await uploadImage(image)
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-          displayName: fullName,
-          email,
-          avatar: image,
-          status: 'Feeling Happy',
-          friends: [],
-          id: userCredential.user.uid})
-        await setDoc(doc(db, "userChats", userCredential.user.uid), {
-          chats: []
-        })
-        await setDoc(doc(db, "userCalls", userCredential.user.uid), {
-          calls: []
-        })
-      } catch (e) {
-        console.log(e.message);
-        setWarn(e.message)
-      }
-    } else {
-      setWarn("Passwords must match")
-    }
-    // setLoading(false)
-  }
+  // const handleRegister = async () => {
+  //   // setLoading(true)
+  //   if (password === confirmPassword) {            
+  //     try {
+  //       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  //       await uploadImage(imageUri)
+  //       await setDoc(doc(db, "users", userCredential.user.uid), {
+  //         displayName: fullName,
+  //         phoneNumber,
+  //         avatar: imageUri,
+  //         status: 'Feeling Happy',
+  //         friends: [],
+  //         id: userCredential.user.uid})
+  //       await setDoc(doc(db, "userChats", userCredential.user.uid), {
+  //         chats: []
+  //       })
+  //       await setDoc(doc(db, "userCalls", userCredential.user.uid), {
+  //         calls: []
+  //       })
+  //     } catch (e) {
+  //       console.log(e.message);
+  //       setWarn(e.message)
+  //     }
+  //   } else {
+  //     setWarn("Passwords must match")
+  //   }
+  //   // setLoading(false)
+  // }
 
     return (
         <View style={styles.container}>
+
             {/* <Text style={{color: '#7CA4FC', fontWeight: '700', fontSize: 17}}>Enter your phone number</Text> */}
             {/* <View style={styles.inputArea}>
                 <Pressable style={styles.dropdown}>
@@ -118,8 +113,8 @@ export default function Register({navigation}: any) {
           </TouchableOpacity>
 
           <Button title="Pick an image from camera roll" onPress={pickImage} />
-          { image && <Image source={{ uri: image}} style={styles.image} />}
-          {!image && <Image 
+          { imageUri && <Image source={{ uri: imageUri}} style={styles.image} />}
+          {!imageUri && <Image 
               source={require('../assets/images/profile.png')}
               style={styles.image}
           />}
@@ -127,7 +122,7 @@ export default function Register({navigation}: any) {
 
           <View style={{marginBottom: 5}}>
             <KeyboardAvoidingView behavior="padding"> 
-              <InputBox placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" />
+              <InputBox placeholder="Phone Number" value={phoneNumber} onChangeText={setPhoneNUmber} autoCapitalize="none" />
               <InputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
               <InputBox placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true}/>
               <InputBox placeholder="Full Name" value={fullName} onChangeText={setFullName} autoCapitalize="words"/>
@@ -144,7 +139,7 @@ export default function Register({navigation}: any) {
 
           <View  style={{alignItems:'center'}}>
               <Text style={{marginTop: 20, color: 'grey'}}>
-                  We'll email you a 5-digit code to verify your email
+                  We'll send you a 5-digit code to verify your phone number
               </Text>
               <Text style={{marginTop: 20, color: 'grey'}}>
                   Don't have a local number?
@@ -166,7 +161,6 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderWidth: 2,
-    borderColor: '#FFD1DC',
     borderRadius: 45,
     marginTop: 20,
   },

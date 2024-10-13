@@ -46,7 +46,7 @@ export default function MainScreen({navigation}: any) {
               <View style={styles.userInfo}>
 
                   <Text style={{fontSize: 20, fontWeight: 'bold'}}> {user.fullName} </Text>
-                  <Text style={{color: '#7b7b92'}}> {user.status == null ? "Status" : user.status} </Text>
+                  <Text style={{color: '#7b7b92'}}> { user.status == null ? "Status" : user.status} </Text>
               </View>
             </View>
           </View>

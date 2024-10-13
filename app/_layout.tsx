@@ -28,37 +28,7 @@ export default function RootLayout() {
 
 function AppNavigator () {
   const Stack = createNativeStackNavigator();
-  const currentUser = false
-  const { user, loading } = useSelector((state) => state.user)
-  // const { currentUser, isLoading, fetchUserInfo }: any = useUserStore()
-
-  // useEffect(() => {
-  //   // const launched = async () => {
-  //   //   const getItem = await getItemFor('HAS_LAUNCHED')
-  //   //   if ( getItem == 'false' ) {
-  //   //     console.log('HAS_LAUNCHED: false')
-  //   //   } else {
-  //   //     console.log('true');
-  //   //   }
-  //   // }
-  //   // launched()
-    
-  //   const unSubscribe = onAuthStateChanged(auth, (user => {
-  //     fetchUserInfo(user?.uid)
-  //     console.log(user?.uid);
-      
-  //     console.log(`onAuthStateChanged - currentUser: ${JSON.stringify(currentUser)}`)
-  //   }))
-  //   return () => {
-  //     unSubscribe()
-  //   }
-  // }, [fetchUserInfo]) 
-
-  // if (isLoading) return (
-  //     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-  //       <ActivityIndicator size='large' color='blue'/>
-  //     </View>
-  //   )
+  const { user, loading, error } = useSelector(state => state.user)
 
   return (
     <Stack.Navigator>

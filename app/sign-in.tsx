@@ -1,24 +1,37 @@
 import InputBox from "@/components/InputBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { defaultStyles } from "@/constants/Styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { View, StyleSheet, Text, Pressable, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "./api/userThunk";
+import { loginUser } from "./api/features/users/userThunk";
+import Toast from "react-native-toast-message";
 
 export default function LogInScreen({navigation}: any) {
-    const [email, setEmail] = useState('matt.berry@gmail.com')
+    const [phoneNumber, setPhoneNumber] = useState('123-123-1234')
     const [password, setPassword] = useState('test123')
     const [warn, setWarn] = useState(null)
     const { user, loading, error } = useSelector((state) => state.user)
     const dispatch = useDispatch() 
 
-    const isButtonDisabled = !email || password.length < 6
+    const isButtonDisabled = !phoneNumber || password.length < 6
 
-    const handleSubmit = async () => {
-      dispatch(loginUser({email, password}))
+    const handleSubmit = () => {
+      const test = async () => { 
+        const t = await dispatch(loginUser({phoneNumber, password}))
+        if (t.payload == 409) {
+          Toast.show({
+            type: 'error',
+            visibilityTime: 5000,
+            text1: 'Woops!',
+            text2: `This phone number doesn't seem to be registered yet...`
+          })
+        }
+        
+      }
+      test()
     }
 
      return (
@@ -37,7 +50,7 @@ export default function LogInScreen({navigation}: any) {
 
       <View style={styles.input}>
         <KeyboardAvoidingView behavior="padding"> 
-          <InputBox placeholder="Email" value={email} onChangeText={setEmail}/>
+          <InputBox placeholder="Phone Number" value={phoneNumber} onChangeText={setPhoneNumber}/>
           <InputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true}/>
         </KeyboardAvoidingView>
       </View>
@@ -53,7 +66,7 @@ export default function LogInScreen({navigation}: any) {
           <Text style={{color: '#7CA4FC'}}>Forgot your password?</Text>
         </Pressable>
       </View>
-
+      <Toast/>
     </View>
   );
 }
