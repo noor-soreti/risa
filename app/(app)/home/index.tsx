@@ -15,9 +15,6 @@ export default function MainScreen({navigation}: any) {
   const [modalVisible, setModalVisible] = useState(false);    
   const { user } = useSelector((state) => state.user)
 
-  console.log(user);
-  
-
     return( 
         <SafeAreaView style={styles.container} >
           <View style={styles.header}>

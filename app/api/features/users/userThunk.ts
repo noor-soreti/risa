@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {api, registerUser} from "../../axiosApiFunctions";
+import {api} from "../../axiosApiFunctions";
 
 /*
 createAsyncThunk 
@@ -17,11 +17,11 @@ export const loginUser = createAsyncThunk(
     async ({...userData} : any, {rejectWithValue}) => {
         try {
             const response = await api.post('/api/user/login', userData)
-            console.log(response.data);
+            console.log(`RESPONSE DATA: ${response.data}`);
             return response.data
-        } catch (error) {
-            console.log(error.status);
-            return rejectWithValue(error)
+        } catch (error: any) {
+            console.log(`user/loginUser ERROR STATUS: ${error}`);
+            return rejectWithValue(error.status)
         }
     }
 )
@@ -39,8 +39,11 @@ export const register = createAsyncThunk(
             
             return response.data
         } catch (error : any) {            
-            // console.log(error)
-            // return error.status
+            console.log(`TYPEOF: error - ||${error}|| is type **${typeof(error)}**`)
+            console.log(`TYPEOF: error.status - ||${error.status}|| is type **${typeof(error.status)}**`)
+            console.log(`RWS: ${JSON.stringify(rejectWithValue(JSON.parse(error.status)))}`);
+            console.log(`RWS: ${JSON.stringify(rejectWithValue(error.status))}`);
+            console.log("-----");
             return rejectWithValue(error.status)
         }
     }

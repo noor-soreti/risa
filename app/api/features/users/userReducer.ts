@@ -2,6 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 // import { loginUser, registerUser } from "../../userThunk";
 import { loginUser, register } from "./userThunk";
 
+/* 
+actions
+    - describes what changes we want to make in state
+*/
+
 interface UserState {
   user: User | null;
   loading: boolean;
@@ -29,7 +34,7 @@ const userSlice = createSlice({
         // login
         .addCase(loginUser.pending, (state) => {
             state.loading = true
-            state.error = null
+            // state.error = null
         })
         .addCase(loginUser.fulfilled, (state, action) => {
             state.loading = false

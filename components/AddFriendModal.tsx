@@ -1,3 +1,4 @@
+import { searchUserByPhoneNumber } from "@/app/api/axiosApiFunctions";
 import { ColorPalette } from "@/constants/Colors";
 import { db } from "@/firebase";
 import { useUserStore } from "@/helperFunction/userStore";
@@ -19,14 +20,16 @@ export default function AddFriend ({setModalVisible, modalVisible}: any) {
 
 
     const handleUserSearch = async () => {
-        setLoading(true)
-        const querySnapshot = await handleFindFriend(search)
-        if (querySnapshot != null) {
-          setSearchUser(querySnapshot)
-        } else {
-          setSearchUser(null)
-        }
+      setLoading(true)
+      const test = await searchUserByPhoneNumber(search)
+      console.log(test);
       setLoading(false)
+        // const querySnapshot = await handleFindFriend(search)
+        // if (querySnapshot != null) {
+        //   setSearchUser(querySnapshot)
+        // } else {
+        //   setSearchUser(null)
+        // }
       }
 
       const handleCall = async () => {

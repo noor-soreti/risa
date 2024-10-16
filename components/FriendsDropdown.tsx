@@ -9,20 +9,20 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 export default function FriendsDropdown (props: any) {
     const [contacts, setContacts] = useState<any>([])
     const { navigation } = props
-    const { currentUser } = useUserStore()    
+    const { currentUser }: any = useUserStore()    
 
-    useEffect(() => {  
-        const fetchFriends = async () => {
-          const friendsPromises = currentUser.friends.map((friendId: string) => 
-            getDoc(doc(db, "users", friendId))
-          );
-          const friendsDocs = await Promise.all(friendsPromises);
-          const friendsData = friendsDocs.map((doc) => doc.data());
-          setContacts(friendsData);
-        }
+    // useEffect(() => {  
+    //     const fetchFriends = async () => {
+    //       const friendsPromises = currentUser.friends.map((friendId: string) => 
+    //         getDoc(doc(db, "users", friendId))
+    //       );
+    //       const friendsDocs = await Promise.all(friendsPromises);
+    //       const friendsData = friendsDocs.map((doc) => doc.data());
+    //       setContacts(friendsData);
+    //     }
   
-        fetchFriends()      
-      }, [contacts]);
+    //     fetchFriends()      
+    //   }, [contacts]);
     
     return (
         <ScrollView>

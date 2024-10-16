@@ -16,21 +16,22 @@ import * as FileSystem from 'expo-file-system';
 import { register } from "./api/features/users/userThunk";
 
 export default function Register({navigation}: any) { 
-  const [phoneNumber, setPhoneNUmber] = useState('555-555-1234')
+  const [phoneNumber, setPhoneNUmber] = useState('123-123-1234')
   const [password, setPassword] = useState('test123')
   const [confirmPassword, setConfirmPassword] = useState('test123')
-  const [fullName, setFullName] = useState('Matt Berry')
+  const [fullName, setFullName] = useState('Buffy Derman')
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [warn, setWarn] = useState('')
   const { user, loading, error } = useSelector((state)=> state.user)
   const dispatch = useDispatch()
   const isButtonDisabled = !phoneNumber || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName  
-  
-  console.log(error);
+
   
   const handleSubmit = async () => {
     const status = await dispatch(register({fullName, phoneNumber, password}))
-    if (status.payload == 409) {
+    // console.log(status);
+    
+    if (status.payload != null) {
       Toast.show({
         type: 'error',
         visibilityTime: 5000,

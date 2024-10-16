@@ -7,18 +7,29 @@ export const api = axios.create({
     },
 });
 
-export const getUserById = async (id: Number) => {
+export const getUserById = async (id: number) => {
     try {
-        const response = await api.get(`/user/id/${id}`);
+        const response = await api.get(`api/user/id/${id}`);
         return response.data
     } catch (error) {
         throw error
     }
 }
 
+export const searchUserByPhoneNumber = async (phoneNumber: string) => {
+    try {
+        const response = await api.get(`api/user/phoneNumber/${phoneNumber}`)
+        console.log(response.data);
+        return response.data
+    } catch (error) {
+        console.log(error);
+        throw error
+    }
+}
+
 export const registerUser = async ({...userData}) => {
     try {
-        const response = await api.post('/user/register', userData)
+        const response = await api.post('api/user/register', userData)
         return response.data
     } catch (error) {
         throw error
@@ -27,7 +38,7 @@ export const registerUser = async ({...userData}) => {
 
 export const getUserChats = async () => {
     try {
-        const response = await api.get(`/chatlog`)
+        const response = await api.get(`api/chatlog`)
         return response.data
     } catch (error) {
         throw error
@@ -36,7 +47,7 @@ export const getUserChats = async () => {
 
 export const getUserNotifications = async (id: String) => {
     try {
-        const response = await api.get(`/user/userNotifications/${id}`)
+        const response = await api.get(`api/user/userNotifications/${id}`)
         return response.data
     } catch (error) {
         throw error
@@ -45,7 +56,7 @@ export const getUserNotifications = async (id: String) => {
 
 export const postMessage = async (messageData: object) => {
     try {
-        const response = await api.post(`/messages`, messageData);
+        const response = await api.post(`api/messages`, messageData);
         return response.data;
     } catch (error) {
         throw error;
