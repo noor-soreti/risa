@@ -20,7 +20,7 @@ export default function LogInScreen({navigation}: any) {
 
     const handleSubmit = () => {
       const test = async () => { 
-        const status = await dispatch(loginUser({phoneNumber, password}))    
+        const status = await dispatch(loginUser({phoneNumber, password}))
         if (status != null) {
           Toast.show({
             type: 'error',

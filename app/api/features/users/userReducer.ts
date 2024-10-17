@@ -8,7 +8,7 @@ actions
 */
 
 interface UserState {
-  user: User | null;
+  user: IUser | null;
   loading: boolean;
   error: string | null;
 }

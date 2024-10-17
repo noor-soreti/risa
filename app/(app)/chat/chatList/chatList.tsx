@@ -8,22 +8,67 @@ import { db } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { getUserChats } from "@/app/api/axiosApiFunctions";
 import ChatPreview from "@/components/ChatPreview";
+import { useSelector } from "react-redux";
 
 export default function ChatList() {
     const [newMessage, setNewMessage] = useState(true)
-    const [ chats, setChats ] = useState([])
+    const [ chats, setChats ] = useState<Array<IChatListItem> | []>([])
     const navigation = useNavigation()
-    const { currentUser }: any = useUserStore()     
+    const { user } = useSelector((state) => state.user)  
+    
+    // useEffect(() => {},[])
+    
+    // useEffect(() => {
+    //     const test = async () => {
+    //         try {
+    //             const userChatData = await getUserChats()
+    //             Object.keys(userChatData).map(e => {
+    //                 console.log(userChatData[e]);
+                    
+    //                 // setChats(prev=>[...prev, e[1]])
+    //             })
+    //         } catch (error) {
+    //             console.error("Error fetching user data", error);
+    //         }
+    //     }
+    //     test()
+    // }, [])
     
     const fetchData = async () => {
-        try {
-            const userChatData = await getUserChats()
-            Object.entries(userChatData).map(userChat => {
-                setChats(prev=>[...prev, userChat[1]])
+        const userChatData = await getUserChats(user.id)
+            .then(userChats => {
+                Object.keys(userChats).map(e => {
+                    Object.keys(userChats[e]["users"]).map(u => {
+                        if (userChats[e]["users"][u]["id"] != user.id) {
+                            const currentChat: IChatListItem = {
+                                id: userChats[e]["users"][u]["id"],
+                                displayName: userChats[e]["users"][u]["fullName"],
+                                lastMessage: userChats[e]["recentMessage"] || "No messages yet!"
+                            }
+                            // console.log(currentChat);
+                            setChats(prev=>[...prev, currentChat])
+                        }
+                    })
+                    
+                    // Object.keys(userChatData[e]["users"]).map(u => {
+                    //     if (userChatData[e]["users"][u]["id"] != user.id) {
+                            // const currentChat: IChatListItem = {
+                            //     id: userChatData[e]["users"][u]["id"],
+                            //     displayName: userChatData[e]["users"][u]["fullName"],
+                            //     lastMessage: userChatData[e] || ""
+                            // }
+                    //         console.log("-------------------------");
+                    //         console.log(chats);
+                    //         console.log("-------------------------");
+        
+                            
+                    //         // console.log(userChatData[e]["users"][u]["id"]);
+                    //         // setChats(prev=>[...prev, currentChat])
+                    //     }  
+                    // })
+                })
+                
             })
-        } catch (error) {
-            console.error("Error fetching user data", error);
-        }
     }
 
     // useEffect(() => {
@@ -47,8 +92,8 @@ export default function ChatList() {
         <View>
             {
                 chats.length != 0 ?
-                Object.keys(chats).map(chat => (
-                    <ChatPreview {...{chats, chat}} />
+                <ChatPreview {...chats} />
+                    
                 // <Pressable onPress={() => navigation.navigate('message', {chatId: chats[chat].chatLogId})} style={styles.userInfo} key={chats[chat].chatLogId}>
                 //     <Image source={require('../../../../assets/images/profile.png')} style={styles.image} />
                 //     <View style={styles.wrapTextContent}>
@@ -78,19 +123,19 @@ export default function ChatList() {
                 //         }
                 //     </View>
                 // </Pressable>
-                ))
+                
 
             : 
-            <View style={styles.noMessage}>
-                <Ionicons name="sad-outline" size={50}/>
-                {/* <Text>No Chats Yet!</Text> */}
+                <View style={styles.noMessage}>
+                    <Ionicons name="sad-outline" size={50}/>
+                    {/* <Text>No Chats Yet!</Text> */}
 
-                <Pressable onPress={() => fetchData()}>
-                    <Text>Press</Text>
-                </Pressable>
+                    <Pressable onPress={() => fetchData()}>
+                        <Text>Press</Text>
+                    </Pressable>
 
-            </View>
-            }
+                </View>
+                }
         </View>
     )
 }

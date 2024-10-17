@@ -1,4 +1,4 @@
-import { searchUserByPhoneNumber } from "@/app/api/axiosApiFunctions";
+import { addContact, searchUserByPhoneNumber } from "@/app/api/axiosApiFunctions";
 import { ColorPalette } from "@/constants/Colors";
 import { db } from "@/firebase";
 import { useUserStore } from "@/helperFunction/userStore";
@@ -8,137 +8,27 @@ import { arrayUnion, collection, doc, getDoc, getDocs, query, serverTimestamp, s
 import { useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 export default function AddFriend ({setModalVisible, modalVisible}: any) {
-    const { currentUser }: any = useUserStore()
-    const [ search, setSearch ] = useState(null)
-    const [ searchUser, setSearchUser ] = useState(null)
-    const [ loading, setLoading ] = useState(false)
+    const [ search, setSearch ] = useState('555-123-1234')
+    const [ searchUser, setSearchUser ] = useState<ISearchContact | null>(null)
+    // const [ loading, setLoading ] = useState(false)
     const [ warn, setWarn ] = useState(false)
+    const { user, loading, error } = useSelector((state)=> state.user)
 
-    const { handleFindFriend }: any = useUserStore()
-
-
+    console.log(user);
+    
     const handleUserSearch = async () => {
-      setLoading(true)
-      const test = await searchUserByPhoneNumber(search)
-      console.log(test);
-      setLoading(false)
-        // const querySnapshot = await handleFindFriend(search)
-        // if (querySnapshot != null) {
-        //   setSearchUser(querySnapshot)
-        // } else {
-        //   setSearchUser(null)
-        // }
-      }
-
-      const handleCall = async () => {
-        const chatRef = collection(db, 'chats')
-        const userChatRef = collection(db, 'userChats')
-  
-        try {
-          const newChatRef = doc(chatRef)
-          await setDoc(newChatRef, {
-            createdAt: serverTimestamp(),
-            messages: []
-          })
-  
-          // update user chat
-          await updateDoc(doc(userChatRef, searchUser.id), {
-            chats: arrayUnion({
-              chatId: newChatRef.id,
-              lastMessage: "",
-              receiverId: currentUser.id,
-              updatedAt: Date.now()
-            })
-          })
-          await updateDoc(doc(userChatRef, currentUser.id), {
-            chats: arrayUnion({
-              chatId: newChatRef.id,
-              lastMessage: "",
-              receiverId: searchUser.id,
-              updatedAt: Date.now()
-            })
-          })
-          
-        } catch (error) {
-          console.log(`handleMessage: ${error}`)
-        }
-      }
-
-      const handleChat = async () => {
-        const callRef = collection(db, 'calls')
-        const userCallRef = collection(db, 'userCalls')
-        try {
-          const newCallRef = doc(callRef)
-          await setDoc(newCallRef, {
-            createdAt: serverTimestamp(),
-            messages: []
-          })
-  
-          // update user chat
-          await updateDoc(doc(userCallRef, searchUser.id), {
-            chats: arrayUnion({
-              chatId: newCallRef.id,
-              lastMessage: "",
-              receiverId: currentUser.id,
-              updatedAt: Date.now()
-            })
-          })
-          await updateDoc(doc(userCallRef, currentUser.id), {
-            chats: arrayUnion({
-              chatId: newCallRef.id,
-              lastMessage: "",
-              receiverId: searchUser.id,
-              updatedAt: Date.now()
-            })
-          })
-        } catch (error) {
-          console.log(`handleMessage: ${error}`)
-        }
+      // setLoading(true)
+      const searchContact = await searchUserByPhoneNumber(search)
+      setSearchUser(searchContact)
+      // setLoading(false)
       }
     
-      const handleAddFriend = async () => {
-        // if searchedUser NOT in currentUser.friends
-        if(!currentUser.friends.includes(searchUser.id)) {
-          try {
-            // add friend to currentUser.friends list and update db
-            const userFriends = currentUser.friends
-            userFriends.push(searchUser.id)
-            const userRef = doc(db, "users", currentUser.id);
-            // Update the "friends" field of the user
-            await updateDoc(userRef, {
-              friends: userFriends
-            });
-            // add friend to searchUser.id.friends list and update db
-            const searchUserRef = doc(db, 'users', searchUser.id)
-            const searchUserDocSnap = await getDoc(searchUserRef)
-            const searchUserFriends = searchUserDocSnap.data()?.friends
-            searchUserFriends.push(currentUser.id)
-            await updateDoc(searchUserRef, {
-              friends: searchUserFriends
-            })
-
-            Toast.show({
-                type: 'success',
-                visibilityTime: 5000,
-                text1: 'Yay!',
-                text2: `Friend request sent to ${searchUser.displayName}`
-              })
-          } catch (error) {
-            console.log(`handleAddUser: ${error}`);  
-          }
-        } else {
-          console.log(`handleAddUser: Already friends with ${searchUser.displayName}`);
-          Toast.show({
-            type: 'error',
-            visibilityTime: 5000,
-            text1: 'Whoops',
-            text2: `Seems like you are already friends with ${searchUser.displayName}`
-          })
-        }
-        handleCall()
-        handleChat()
+      const handleAddFriend = async () => {        
+        const addFriend = await addContact(user.id, searchUser.id)
+        console.log(addFriend);
       }
 
     return (
@@ -163,9 +53,7 @@ export default function AddFriend ({setModalVisible, modalVisible}: any) {
                     <>
                     {searchUser ? 
                       <View style={styles.userSearchInfo}>
-                          <Text style={{flex: 1, fontSize: 18}}>
-                          {searchUser.displayName}
-                          </Text>
+                          <Text style={{flex: 1, fontSize: 18}}> {searchUser.fullName} </Text>
                       <Pressable onPress={handleAddFriend}>
                           <Ionicons name="add" size={28} />
                       </Pressable>

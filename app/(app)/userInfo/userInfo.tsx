@@ -7,6 +7,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUserStore } from "@/helperFunction/userStore";
 import { StatusBar } from "expo-status-bar";
+import { useSelector } from "react-redux";
+import { newChatLog } from "@/app/api/axiosApiFunctions";
 
 // 57:50
 export default function UserInfo(props: any) {
@@ -17,7 +19,7 @@ export default function UserInfo(props: any) {
     const [files, setFiles] = useState(false)
     const settingsList = ['Chat Settings', 'Privacy & Help', 'Shared Photos', 'Shared Files']
     const navigation = useNavigation()        
-    const { currentUser, getUserChats }: any = useUserStore()
+    const { user } = useSelector((state) => state.user)
 
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
@@ -39,16 +41,30 @@ export default function UserInfo(props: any) {
     }
 
     const handleMessage = async () => {
-      const userChats = await getUserChats(currentUser)
-      if (userChats) {        
-        for (let i = 0; i < userChats.data()?.chats.length; i++) {
-          if (userChats.data()?.chats[i].receiverId == userInfo.id) {
-            navigation.navigate('message', {chatId: userChats.data()?.chats[i].chatId})
-          } 
-        }
-      } else {
-        console.log('null');
-      }
+      // 1. check if chatLog exists between user and contact
+      Object.keys(user.contacts).map(e => {
+        if (Object.values(user.contacts[e]).includes(userInfo.id)) {
+          navigation.navigate('message', {chatId: userInfo.id})
+        }        
+      })
+      // 2. create new chatLog between user and contact if 
+      const idSet = new Set([user.id, userInfo.id])      
+      const test = await newChatLog(Array.from(idSet))
+      
+      
+
+      // const userChats = await getUserChats(currentUser)
+      // if (userChats) {        
+      //   for (let i = 0; i < userChats.data()?.chats.length; i++) {
+      //     if (userChats.data()?.chats[i].receiverId == userInfo.id) {
+      //       navigation.navigate('message', {chatId: userChats.data()?.chats[i].chatId})
+      //     } 
+      //   }
+      // } else {
+      //   console.log('null');
+      // }
+
+
     }
 
     const handleCall = async () => {

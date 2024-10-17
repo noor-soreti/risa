@@ -17,7 +17,6 @@ export const loginUser = createAsyncThunk(
     async ({...userData} : any, {rejectWithValue}) => {
         try {
             const response = await api.post('/api/user/login', userData)
-            console.log(`RESPONSE DATA: ${response.data}`);
             return response.data
         } catch (error: any) {
             console.log(`user/loginUser ERROR STATUS: ${error}`);
