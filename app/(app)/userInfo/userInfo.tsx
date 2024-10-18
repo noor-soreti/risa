@@ -3,9 +3,6 @@ import { StyleSheet, Text, View, Pressable, Image, Button, SafeAreaView, Platfor
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase";
-import { useUserStore } from "@/helperFunction/userStore";
 import { StatusBar } from "expo-status-bar";
 import { useSelector } from "react-redux";
 import { newChatLog } from "@/app/api/axiosApiFunctions";
@@ -19,7 +16,7 @@ export default function UserInfo(props: any) {
     const [files, setFiles] = useState(false)
     const settingsList = ['Chat Settings', 'Privacy & Help', 'Shared Photos', 'Shared Files']
     const navigation = useNavigation()        
-    const { user } = useSelector((state) => state.user)
+    const { user, error } = useSelector((state) => state.user)    
 
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
@@ -40,31 +37,11 @@ export default function UserInfo(props: any) {
         }
     }
 
-    const handleMessage = async () => {
-      // 1. check if chatLog exists between user and contact
-      Object.keys(user.contacts).map(e => {
-        if (Object.values(user.contacts[e]).includes(userInfo.id)) {
-          navigation.navigate('message', {chatId: userInfo.id})
-        }        
-      })
-      // 2. create new chatLog between user and contact if 
-      const idSet = new Set([user.id, userInfo.id])      
-      const test = await newChatLog(Array.from(idSet))
-      
-      
-
-      // const userChats = await getUserChats(currentUser)
-      // if (userChats) {        
-      //   for (let i = 0; i < userChats.data()?.chats.length; i++) {
-      //     if (userChats.data()?.chats[i].receiverId == userInfo.id) {
-      //       navigation.navigate('message', {chatId: userChats.data()?.chats[i].chatId})
-      //     } 
-      //   }
-      // } else {
-      //   console.log('null');
-      // }
-
-
+    const handleMessage = async() => {
+      const idSet = new Set([user.id, userInfo.contact_id])      
+      await newChatLog(Array.from(idSet))
+        .catch(err => console.log("errrrr"))
+      // .finally(u => navigation.navigate('message', {chatId: userInfo.id}))
     }
 
     const handleCall = async () => {

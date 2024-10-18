@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getChatLogs } from "./chatLogThunk"
+import { getUserChatLogs } from "./chatLogThunk"
 
 interface ChatLogState {
     chatLog: Set<IChatLog> | null
@@ -19,14 +19,14 @@ const chatLogSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-        .addCase(getChatLogs.pending, (state) => {
+        .addCase(getUserChatLogs.pending, (state) => {
             state.loading = true
         })
-        .addCase(getChatLogs.fulfilled, (state, action) => {
+        .addCase(getUserChatLogs.fulfilled, (state, action) => {
             state.chatLog = action.payload
             state.loading = false
         })
-        .addCase(getChatLogs.rejected, (state, action) => {
+        .addCase(getUserChatLogs.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
         })

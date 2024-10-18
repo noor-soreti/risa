@@ -1,12 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../axiosApiFunctions";
 
-export const getChatLogs = createAsyncThunk(
-    'chatLog/getChatLogs',
-    async (e, {rejectWithValue}) => {
+export const getUserChatLogs = createAsyncThunk(
+    'chatLog/getUserChatLogs',
+    async (userid: number, {rejectWithValue}) => {
         try {
-            return e
-        } catch (error) {
-            return rejectWithValue(error)
+            const response = await api.get(`/api/chatLog/userid/${userid}`)
+            console.log(response.data);
+            return response.data
+        } catch (error: any) {
+            console.log(error);
+            return rejectWithValue(error.status)
         }
     }
 )

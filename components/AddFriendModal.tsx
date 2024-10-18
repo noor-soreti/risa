@@ -17,7 +17,7 @@ export default function AddFriend ({setModalVisible, modalVisible}: any) {
     const [ warn, setWarn ] = useState(false)
     const { user, loading, error } = useSelector((state)=> state.user)
 
-    console.log(user);
+    console.log(searchUser);
     
     const handleUserSearch = async () => {
       // setLoading(true)

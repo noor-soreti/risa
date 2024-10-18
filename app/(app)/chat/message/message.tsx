@@ -4,9 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase";
-import { useUserStore } from "@/helperFunction/userStore";
 
 export default function Message(props: any) {
     const iconsTop = ['phone', 'camera', 'cog']
@@ -17,29 +14,12 @@ export default function Message(props: any) {
     const [ userInfo, setUserInfo ] = useState()
     const [ keyboardShown, setKeyboardShown ] = useState(false)
     const { chatId } = props.route.params    
-    
+
     useEffect(() => {
-
-        const test = async () => {
-            const chatRef = doc(db, 'chats', chatId)
-            const chatSnap = await getDoc(chatRef)
-            console.log(chatSnap.data());
-        }
-
-        test()
-
-        // const unsub = async () => {
-            // listen to meta data changes: { includeMetadataChanges: true }, 
-        //     const chatRef = onSnapshot(doc(db, 'chats', chatId), { includeMetadataChanges: true }, (doc) => {
-        //         // listen on local writes:
-        //         const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-        //         console.log(source, " data: ", doc.data());
-        //         setMessages(doc.data()?.messages)
-        //     })
-        // }
-        // unsub()
+        console.log(chatId);
+        
     }, [])
-
+    
     const handleHeaderOptions = (option: string) => {
         if (option == 'cog') {
             navigation.navigate('userInfo', userInfo)
@@ -49,17 +29,8 @@ export default function Message(props: any) {
     }
 
     const handleSendMessage = async () => {
-        // console.log('send message');
-        const chatRef = doc(db, 'chats', chatId)
-        const chatSnap = await updateDoc(chatRef, {
-            messages: arrayUnion(inputText)
-        })
-
-        const chatDocSnap = await getDoc(chatRef)
-
-
-        console.log(chatDocSnap.data())
-        setInputText('')
+        console.log(inputText);
+        
     }
 
     return (
@@ -74,7 +45,7 @@ export default function Message(props: any) {
                 <View style={styles.headerOptions}>
                     {
                         iconsTop.map(name => (
-                            <Pressable onPress={() => handleHeaderOptions(name)} key={name}>
+                            <Pressable key={name}>
                                 <FontAwesome name={name} size={20}/>
                             </Pressable>
                         ))
@@ -85,8 +56,7 @@ export default function Message(props: any) {
             <KeyboardAvoidingView 
                 style={{flex: 1}} 
                 behavior={Platform.OS === "ios" ? "height" : undefined}
-                keyboardVerticalOffset={80}
-                >
+                keyboardVerticalOffset={80}>
                     {
                         messages.length == 0 
                         ? 
@@ -195,6 +165,8 @@ const styles = StyleSheet.create({
         gap: 10,
         flex: 1,
         backgroundColor: '#FFFFFF',
+        paddingTop: 20,
+        paddingBottom: 10
       },
       header: {
         display: 'flex',
@@ -202,7 +174,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderBottomWidth: 1,
         borderBottomColor: ColorPalette.borderGrey,
-        padding: 15
+        margin: 15
       }, 
       headerLeft:{
         display: 'flex',

@@ -27,12 +27,15 @@ export const Colors = {
 
 export const ColorPalette = {
   primary: '#20AB6E',
+  skyBlue: '#A0E4FF',
+  deepNavy: '#243447',
   lime: '#D7FFD4',
-  paleYellow: '#FFFFD1',
+  lemonChiffon: '#FFF9B0',
   pink: '#F655FF',
   tangerine: '#FC6A07',
   magenta: "#FF00FF",
-  peach: "#FFE6CC",
+  peach: "#FFD7B5",
+  warmBrown: '#5C4033',
   fuchsia: "#FF007F",
   white: '#FFFFFF',
   grey: '#242026',
@@ -40,5 +43,8 @@ export const ColorPalette = {
   borderGrey: "#1119270a",
   input: '#EEE9F0',
   selected: '#F7F2F9',
-  dark: '#2F2D32'
+  dark: '#2F2D32',
+  green: '#9bdf68',
+  greenText: '#9bdf68',
+  charcoal: '#2E2E2E'
 }

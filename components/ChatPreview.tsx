@@ -1,9 +1,14 @@
 import { ColorPalette } from "@/constants/Colors";
+import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Image, View } from "react-native";
 
 export default function ChatPreview(chats: Array<IChatListItem>) {
     const [ fullName, setFullName ] = useState([]); 
+    const navigation = useNavigation()
+
+    console.log(chats);
+    
     
     // useEffect(() => {
     //     const getPreviewInfo = async () => {
@@ -21,16 +26,29 @@ export default function ChatPreview(chats: Array<IChatListItem>) {
     //     }
     //     getPreviewInfo()
     // }, [])
+
+    const navigateToMessage = (contactId: any) => {
+        console.log(contactId);
+        
+        // navigation.navigate('message', {chatId: contactId})
+    }
     
     return (  
-        <Pressable style={styles.userInfo}>
-            <Image source={require('../assets/images/profile.png')} style={styles.image} />
-            <View style={styles.previewText}>
-                <Text style={styles.previewTextDisplayName}>{chats[0].displayName}</Text>
-                <Text style={styles.previewTextLastMessage}> {chats[0].lastMessage} </Text>
-            </View>
-
-        </Pressable>
+        <View>
+            {
+            Object.keys(chats).map(chat => {
+                return(
+                <Pressable style={styles.userInfo} onPress={() => navigateToMessage(chats)} key={chats[chat].id}>
+                    <Image source={require('../assets/images/profile.png')} style={styles.image} />
+                    <View style={styles.previewText}>
+                        <Text style={styles.previewTextDisplayName}>{chats[chat].displayName}</Text>
+                        <Text style={styles.previewTextLastMessage}> {chats[chat].lastMessage} </Text>
+                    </View>
+                </Pressable>
+                )
+            })
+        }
+        </View>
     )
 }
 

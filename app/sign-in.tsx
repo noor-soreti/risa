@@ -13,21 +13,34 @@ export default function LogInScreen({navigation}: any) {
     const [phoneNumber, setPhoneNumber] = useState('123-123-1234')
     const [password, setPassword] = useState('test123')
     const [warn, setWarn] = useState(null)
-    const { loading } = useSelector((state) => state.user)
+    const { loading, error } = useSelector((state) => state.user)
     const dispatch = useDispatch() 
 
     const isButtonDisabled = !phoneNumber || password.length < 6
 
+    console.log(error);
+    
+
     const handleSubmit = () => {
       const test = async () => { 
-        const status = await dispatch(loginUser({phoneNumber, password}))
-        if (status != null) {
-          Toast.show({
-            type: 'error',
-            visibilityTime: 5000,
-            text1: 'Woops!',
-            text2: `This phone number has not been registered yet!`
-          })
+        const err = await dispatch(loginUser({phoneNumber, password}))
+        switch (err.payload) {
+          case 500:
+            Toast.show({
+              type: 'error',
+              visibilityTime: 5000,
+              text1: 'Server Error: 500',
+            })
+            break;
+          case 409: 
+            Toast.show({
+              type: 'error',
+              visibilityTime: 5000,
+              text1: 'Woops!',
+              text2: `This phone number has not been registered yet!`
+            })        
+          default:
+            break;
         }
       }
       test()

@@ -67,13 +67,15 @@ export const getUserNotifications = async (id: String) => {
 export const newChatLog = async (userIds: any) => {
     try {
         const response = await api.post("/api/chatlog", userIds)
-        console.log(response.data);
         return response.data
     } catch (error) {
         console.log(error);
-        
         throw error
     }
+}
+
+export const getUserChatLog = async (chatLogId: number) => {
+
 }
 
 export const postMessage = async (messageData: object) => {

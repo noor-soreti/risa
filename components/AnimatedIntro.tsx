@@ -16,13 +16,13 @@ import { ReText } from 'react-native-redash';
 const content = [
   {
     title: "Let's talk.",
-    bg: ColorPalette.lime,
-    fontColor: ColorPalette.pink,
+    bg: ColorPalette.lemonChiffon,
+    fontColor: ColorPalette.warmBrown,
   },
   {
     title: "Let's connect.",
-    bg: ColorPalette.paleYellow,
-    fontColor: ColorPalette.magenta,
+    bg: ColorPalette.skyBlue,
+    fontColor: ColorPalette.deepNavy,
   },
   {
     title: "Let's catch up.",
@@ -30,9 +30,9 @@ const content = [
     fontColor: ColorPalette.fuchsia,
   },
   {
-    title: "Let's RISA",
-    bg: ColorPalette.white,
-    fontColor: ColorPalette.tangerine,
+    title: "Let's VERA",
+    bg: ColorPalette.green,
+    fontColor: ColorPalette.charcoal,
   },
 ];
 
