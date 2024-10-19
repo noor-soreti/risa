@@ -46,5 +46,6 @@ export const ColorPalette = {
   dark: '#2F2D32',
   green: '#9bdf68',
   greenText: '#9bdf68',
+  darkGreen: '#72cf2c',
   charcoal: '#2E2E2E'
 }

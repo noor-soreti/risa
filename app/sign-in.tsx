@@ -8,6 +8,7 @@ import { View, StyleSheet, Text, Pressable, KeyboardAvoidingView, TouchableOpaci
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "./api/features/users/userThunk";
 import Toast from "react-native-toast-message";
+import { ColorPalette } from "@/constants/Colors";
 
 export default function LogInScreen({navigation}: any) {
     const [phoneNumber, setPhoneNumber] = useState('123-123-1234')
@@ -52,12 +53,12 @@ export default function LogInScreen({navigation}: any) {
           <Ionicons name="close-outline" size={28} />
         </TouchableOpacity>
       <View style={styles.welcome}>
-      <Text style={{color: '#7CA4FC', fontSize: 20}}>Welcome to</Text>
-        <Text style={{fontFamily: 'SingleDay', fontSize: 55, color: '#7CA4FC'}}>RISA</Text>
+      <Text style={{color: ColorPalette.darkGreen, fontSize: 20}}>Welcome to</Text>
+        <Text style={{fontFamily: 'SingleDay', fontSize: 55, color: ColorPalette.darkGreen}}>VERA</Text>
       </View>
 
       <View style={styles.text}>
-        <Text style={{color: '#7CA4FC'}}>Already have an account?</Text>
+        <Text style={{color: ColorPalette.darkGreen}}>Already have an account?</Text>
       </View>
 
       <View style={styles.input}>
@@ -75,7 +76,7 @@ export default function LogInScreen({navigation}: any) {
 
       <View style={styles.text}>
         <Pressable onPress={() => navigation.navigate("forgotPassword")} >
-          <Text style={{color: '#7CA4FC'}}>Forgot your password?</Text>
+          <Text style={{color: 'grey'}}>Forgot your password?</Text>
         </Pressable>
       </View>
       <Toast/>
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   btnColour: {
-    backgroundColor: '#7CA4FC',
+    backgroundColor: ColorPalette.darkGreen,
   },
   btnText: {
     fontSize: 16,

@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userReducer from "@/app/api/features/users/userReducer"
+import userReducer from "@/app/api/features/users/userSlice"
 import { useDispatch, useSelector } from 'react-redux'
-// import chatLogReducer from '@/app/api/features/chatLogs/chatlogReducer'
+import chatLogReducer from '@/app/api/features/chatLogs/chatLogSlice'
+import contactReducer from '@/app/api/features/contacts/contactSlice'
 
 
 /*
@@ -25,7 +26,8 @@ configureStore:
 export const store = configureStore({
     reducer: {
         user: userReducer,
-        // chatLog: chatLogReducer
+        chatLog: chatLogReducer,
+        contact: contactReducer
     }
 })
 

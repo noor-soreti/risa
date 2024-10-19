@@ -2,14 +2,12 @@ import { ColorPalette } from "@/constants/Colors";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Image, View } from "react-native";
+import { useSelector } from "react-redux";
 
-export default function ChatPreview(chats: Array<IChatListItem>) {
-    const [ fullName, setFullName ] = useState([]); 
+export default function ChatPreview() {
     const navigation = useNavigation()
+    const { chatLog } = useSelector((state) => state.chatLog)
 
-    console.log(chats);
-    
-    
     // useEffect(() => {
     //     const getPreviewInfo = async () => {
     //         try {
@@ -27,22 +25,24 @@ export default function ChatPreview(chats: Array<IChatListItem>) {
     //     getPreviewInfo()
     // }, [])
 
-    const navigateToMessage = (contactId: any) => {
-        console.log(contactId);
-        
-        // navigation.navigate('message', {chatId: contactId})
+    const navigateToMessage = (chat: IChatListItem) => {
+        console.log(chat.chatLogId);
+        navigation.navigate('message', {chatId: chat.chatLogId})
     }
     
     return (  
         <View>
             {
-            Object.keys(chats).map(chat => {
+            Object.keys(chatLog).map(chat => {
                 return(
-                <Pressable style={styles.userInfo} onPress={() => navigateToMessage(chats)} key={chats[chat].id}>
+                    // <Text>
+                    //     {chatLog[chat].id}
+                    // </Text>
+                <Pressable style={styles.userInfo} onPress={() => navigateToMessage(chatLog[chat])} key={chatLog[chat].chatLogId}>
                     <Image source={require('../assets/images/profile.png')} style={styles.image} />
                     <View style={styles.previewText}>
-                        <Text style={styles.previewTextDisplayName}>{chats[chat].displayName}</Text>
-                        <Text style={styles.previewTextLastMessage}> {chats[chat].lastMessage} </Text>
+                        <Text style={styles.previewTextDisplayName}>{chatLog[chat].names}</Text>
+                        <Text style={styles.previewTextLastMessage}> {chatLog[chat].recentMessage || "No messages yet"} </Text>
                     </View>
                 </Pressable>
                 )
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     previewTextLastMessage: {
-        color: "#9E9E9E"
+        color: "#9E9E9E",
+        fontStyle: 'italic'
     }
 })

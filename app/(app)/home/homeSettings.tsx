@@ -5,7 +5,7 @@ import { SafeAreaView, StyleSheet, Text, Alert, TouchableOpacity } from "react-n
 import { defaultStyles } from "@/constants/Styles";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/app/api/features/users/userReducer";
+import { logout } from "@/app/api/features/users/userSlice";
 
 
 export default function HomeSettings() {

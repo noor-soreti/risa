@@ -1,12 +1,8 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import NewMessage from "@/components/NewMessage";
 import { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { useUserStore } from "@/helperFunction/userStore";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
-import { db } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
-import { getUserChats } from "@/app/api/axiosApiFunctions";
 import ChatPreview from "@/components/ChatPreview";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserChatLogs } from "@/app/api/features/chatLogs/chatLogThunk";
@@ -14,53 +10,57 @@ import { getUserChatLogs } from "@/app/api/features/chatLogs/chatLogThunk";
 export default function ChatList() {
     const [newMessage, setNewMessage] = useState(true)
     const [ chats, setChats ] = useState<Array<IChatListItem> | []>([])
-    const navigation = useNavigation()
-    const { user } = useSelector((state) => state.user)  
-    const dispatch = useDispatch()
+    const { chatLog, loading } = useSelector((state) => state.chatLog)  
+    const { user } = useSelector((state) => state.user)
+    const dispatch = useDispatch()    
     
-    useEffect(() => {
-        fetchData()
+    useEffect(() => {    
+        const populateChats = async () => {
+            await dispatch(getUserChatLogs(user.id))
+        }
+        populateChats()
     },[])
+
+    if (loading) {
+        return (
+            <ActivityIndicator size={30} color={'blue'} style={{flex: 1, alignContent: 'center'}} />
+        )
+    } 
     
-    const fetchData = async () => {
-        await dispatch(getUserChatLogs(user.id))
-        console.log("");
-
-        // await getUserChats(user.id)
-        //     .then(userChats => {
-        //         Object.keys(userChats).map(e => {
-        //             Object.keys(userChats[e]["users"]).map(u => {
-        //                 if (userChats[e]["users"][u]["id"] != user.id) {
-        //                     const currentChat: IChatListItem = {
-        //                         id: userChats[e]["users"][u]["id"],
-        //                         displayName: userChats[e]["users"][u]["fullName"],
-        //                         lastMessage: userChats[e]["recentMessage"] || "No messages yet!"
-        //                     }
-        //                     setChats(prev=>[...prev, currentChat])
-        //                 }
-        //             })
-        //         })
-        //     })
-    }
-
-    return (
-        <View>
-            {
-                chats.length != 0 ?
-                <ChatPreview {...chats} />
-            : 
-                <View style={styles.noMessage}>
+    if (chatLog != null) {
+        return (
+            <ChatPreview />
+        )
+    } else {
+        <View style={styles.noMessage}>
                     <Ionicons name="sad-outline" size={50}/>
-                    {/* <Text>No Chats Yet!</Text> */}
+                    <Text>No Chats Yet!</Text>
 
-                    <Pressable onPress={() => fetchData()}>
+                    {/* <Pressable onPress={() => fetchData()}>
                         <Text>Press</Text>
-                    </Pressable>
+                    </Pressable> */}
 
                 </View>
-                }
-        </View>
-    )
+    }
+
+    // return (
+    //     <View>
+    //         {
+    //             chatLog != null ?
+    //             <ChatPreview />
+    //         : 
+    //             <View style={styles.noMessage}>
+    //                 <Ionicons name="sad-outline" size={50}/>
+    //                 <Text>No Chats Yet!</Text>
+
+    //                 {/* <Pressable onPress={() => fetchData()}>
+    //                     <Text>Press</Text>
+    //                 </Pressable> */}
+
+    //             </View>
+    //             }
+    //     </View>
+    // )
 }
 
 const styles = StyleSheet.create({

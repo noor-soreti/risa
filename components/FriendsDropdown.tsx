@@ -1,16 +1,31 @@
+import { getUserContacts } from "@/app/api/features/contacts/contactThunk";
 import { ColorPalette } from "@/constants/Colors";
 import { db } from "@/firebase";
 import { useUserStore } from "@/helperFunction/userStore";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useSelector } from "react-redux";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function FriendsDropdown (props: any) {
     const { navigation } = props
     const { user } = useSelector((state) => state.user)   
-    const [contacts, setContacts] = useState<IContacts | []>(user.contacts)    
+    const { contacts, loading } = useSelector((state) => state.contact)
+    const dispatch = useDispatch()  
+
+    useEffect(() => {
+        const getContacts = async () => {
+            await dispatch(getUserContacts(user.id))
+        }
+        getContacts()
+    },[])
+    
+    if (loading) {
+        return (
+            <ActivityIndicator size={20} color={'blue'}/>
+        )
+    }
     
     return (
         <ScrollView>

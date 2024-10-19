@@ -11,6 +11,10 @@ createAsyncThunk
 -> these actions can be handled in extraReducers
 */
 
+/*
+  **Thunks are not actions themselves**, they are a type of function to handle asynchronous actions
+ */
+
 // thunk to handle user login
 export const loginUser = createAsyncThunk(
     'user/loginUser',

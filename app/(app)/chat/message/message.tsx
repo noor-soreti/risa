@@ -45,7 +45,7 @@ export default function Message(props: any) {
                 <View style={styles.headerOptions}>
                     {
                         iconsTop.map(name => (
-                            <Pressable key={name}>
+                            <Pressable key={name} onPress={() => handleHeaderOptions(name)}>
                                 <FontAwesome name={name} size={20}/>
                             </Pressable>
                         ))

@@ -4,8 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
 import { StatusBar } from "expo-status-bar";
-import { useSelector } from "react-redux";
-import { newChatLog } from "@/app/api/axiosApiFunctions";
+import { useDispatch, useSelector } from "react-redux";
+import { createChatLog } from "@/app/api/features/chatLogs/chatLogThunk";
 
 // 57:50
 export default function UserInfo(props: any) {
@@ -16,8 +16,9 @@ export default function UserInfo(props: any) {
     const [files, setFiles] = useState(false)
     const settingsList = ['Chat Settings', 'Privacy & Help', 'Shared Photos', 'Shared Files']
     const navigation = useNavigation()        
-    const { user, error } = useSelector((state) => state.user)    
-
+    const dispatch = useDispatch()
+    const { user } = useSelector((state) => state.user)  
+    const { chatLog } = useSelector((state) => state.chatLog) 
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
         case 'chat':
@@ -38,10 +39,14 @@ export default function UserInfo(props: any) {
     }
 
     const handleMessage = async() => {
-      const idSet = new Set([user.id, userInfo.contact_id])      
-      await newChatLog(Array.from(idSet))
-        .catch(err => console.log("errrrr"))
-      // .finally(u => navigation.navigate('message', {chatId: userInfo.id}))
+      const idSet = new Set([user.id, userInfo.contact_id])     
+      const test = await dispatch(createChatLog(Array.from(idSet)))
+      if (test.payload == 409) {
+        console.log("whoops: 409");
+        
+        // navigation.navigate('message', {chatId:})
+      }
+      
     }
 
     const handleCall = async () => {

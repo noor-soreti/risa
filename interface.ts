@@ -1,47 +1,50 @@
-interface IMessage {
+interface IUser {
+  id: number;
+  fullName: string;
+  phoneNumber: string;
+  avatar: string;
+  status: string;
+  lastSeen: number; // Assuming Unix timestamp (milliseconds)
+  isOnline: boolean;
+}
+
+interface IChatLog {
+    id: number;
+    recentMessage: string;
+    message: Set<IMessage>;
+    users: Set<IUser>;
+    names: Set<string>
+  }
+
+  interface IMessage {
     id: number
     message: string;
     senderId: number;
     deliveredAt: number;
     readAt: number;
-}
+  }
 
-interface IChatLog {
+  interface IContact {
     id: number;
-    message: Set<IMessage>;
-    users: Set<IUser>;
+    userId: number;
+    contactId: number;
+    displayName: string;
+    // addedAt: number??
   }
-  
-  interface IUser {
+
+  /*****************************************/
+
+  // display on chatPreview screen
+  interface IChatListItem {
     id: number;
-    fullName: string;
-    phoneNumber: string;
-    profilePicture: string;
-    status: string;
-    lastSeen: number; // Assuming Unix timestamp (milliseconds)
-    isOnline: boolean;
-    chatLogs: Set<IChatLog> | [];
-    contacts: Set<IContacts> | [];
+    names: string;
+    lastMessage: string;
   }
-  
+
   interface ISearchContact {
     id: number;
     fullName: string;
     phoneNumber: string;
     profilePicture: string;
     isOnline: boolean;
-  }
-
-  interface IContacts {
-    id: number;
-    userId: number;
-    contactId: number;
-    // addedAt: number??
-    displayName: string;
-  }
-
-  interface IChatListItem {
-    id: number;
-    displayName: string;
-    lastMessage: string;
   }

@@ -2,18 +2,15 @@ import { useState } from "react";
 import { View, Text, Button, KeyboardAvoidingView, Image, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import InputBox from "@/components/InputBox";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db, storage } from "@/firebase";
 import { Ionicons } from "@expo/vector-icons";
-import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { defaultStyles } from "@/constants/Styles";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 import { postImage } from "./api/axiosApiFunctions";
 import * as FileSystem from 'expo-file-system';
 import { register } from "./api/features/users/userThunk";
+import { ColorPalette } from "@/constants/Colors";
 
 export default function Register({navigation}: any) { 
   const [phoneNumber, setPhoneNUmber] = useState('123-123-1234')
@@ -142,9 +139,9 @@ export default function Register({navigation}: any) {
               <Text style={{marginTop: 20, color: 'grey'}}>
                   We'll send you a 5-digit code to verify your phone number
               </Text>
-              <Text style={{marginTop: 20, color: 'grey'}}>
+              {/* <Text style={{marginTop: 20, color: 'grey'}}>
                   Don't have a local number?
-              </Text>
+              </Text> */}
           </View>
           <Toast/>
         </View>
@@ -211,7 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   btnColour: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: ColorPalette.darkGreen,
   },
   text: {
     fontSize: 16,
