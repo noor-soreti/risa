@@ -40,8 +40,20 @@ export default function LogInScreen({navigation}: any) {
               text1: 'Woops!',
               text2: `This phone number has not been registered yet!`
             })        
+          case 404: 
+            Toast.show({
+              type: 'error',
+              visibilityTime: 5000,
+              text1: 'Woops!',
+              text2: `Server(s) are down`
+            })        
           default:
-            break;
+            Toast.show({
+              type: 'error',
+              visibilityTime: 5000,
+              text1: 'Woops!',
+              text2: `Something went wrong... please try again`
+            })
         }
       }
       test()

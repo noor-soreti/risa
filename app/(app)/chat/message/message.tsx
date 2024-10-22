@@ -4,21 +4,20 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import { sendMessage, stompClient } from "@/app/api/websocket/stompClient";
+import { useSelector } from "react-redux";
 
 export default function Message(props: any) {
     const iconsTop = ['phone', 'camera', 'cog']
     const iconsBottom = ['camera', 'image']
     const navigation = useNavigation()
     const [inputText, setInputText] = useState('')
-    const [ messages, setMessages ] = useState([])
+    const [ messages, setMessages ] = useState<Array<IMessage>>([])
     const [ userInfo, setUserInfo ] = useState()
-    const [ keyboardShown, setKeyboardShown ] = useState(false)
-    const { chatId } = props.route.params    
+    const { chatId } = props.route.params   
+    const { user } = useSelector((state) => state.user)     
 
-    useEffect(() => {
-        console.log(chatId);
-        
-    }, [])
+    console.log(chatId);
     
     const handleHeaderOptions = (option: string) => {
         if (option == 'cog') {
@@ -29,15 +28,24 @@ export default function Message(props: any) {
     }
 
     const handleSendMessage = async () => {
-        console.log(inputText);
-        
+        let newMessage: ISendMessage = {
+            message: inputText,
+            senderId: user.id,
+            deliveredAt: 333,
+        }
+        sendMessage(newMessage, chatId)
+    }
+
+    const handleGoBack = () => {
+        stompClient.deactivate()
+        navigation.goBack()
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
-                    <Pressable onPress={() => navigation.goBack()}>
+                    <Pressable onPress={() => handleGoBack()}>
                         <FontAwesome name="angle-left" size={20} />
                     </Pressable>
                     <Text style={{fontWeight: 'bold', fontSize: 17}}> Emily Grant </Text>

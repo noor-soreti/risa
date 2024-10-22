@@ -9,7 +9,7 @@ export default function Header(props: any) {
             <Text style={{fontWeight: 'bold', fontSize: 20}} >{title}</Text>
             <View style={styles.headerOptions}>
             {
-                icons.map((name) => (
+                icons.map((name: any) => (
                     <Pressable onPress={() => console.log(name)} key={name}>
                         <FontAwesome name={name} size={20}/>
                     </Pressable>

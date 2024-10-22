@@ -48,3 +48,9 @@ interface IChatLog {
     profilePicture: string;
     isOnline: boolean;
   }
+
+  interface ISendMessage {
+    message: string;
+    senderId: number;
+    deliveredAt: number;
+  }

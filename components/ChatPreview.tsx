@@ -1,3 +1,4 @@
+import { stompClient } from "@/app/api/websocket/stompClient";
 import { ColorPalette } from "@/constants/Colors";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ export default function ChatPreview() {
     // }, [])
 
     const navigateToMessage = (chat: IChatListItem) => {
-        console.log(chat.chatLogId);
+        stompClient.activate()
         navigation.navigate('message', {chatId: chat.chatLogId})
     }
     
