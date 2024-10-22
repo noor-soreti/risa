@@ -19,6 +19,7 @@ export default function UserInfo(props: any) {
     const dispatch = useDispatch()
     const { user } = useSelector((state) => state.user)  
     const { chatLog } = useSelector((state) => state.chatLog) 
+
     const toggleState = (key: string) => {
       switch (key.toLowerCase()) {
         case 'chat':
@@ -38,14 +39,16 @@ export default function UserInfo(props: any) {
         }
     }
 
-    const handleMessage = async() => {
+    const handleChatLog = async() => {      
       const idSet = new Set([user.id, userInfo.contact_id])     
-      const test = await dispatch(createChatLog(Array.from(idSet)))
-      if (test.payload == 409) {
-        console.log("whoops: 409");
-        
-        // navigation.navigate('message', {chatId:})
-      }
+      dispatch(createChatLog(Array.from(idSet)))
+      // if (test.payload == 409) {
+      //   console.log("whoops: 409");
+      //   // navigation.navigate('message', {chatId:chatLog[0].chatLogId, names:chatLog[0].names})
+      // } else {
+      //   console.log("ELSE");
+      //   // navigation.navigate('message', {chatId:chatLog[0].chatLogId, names:chatLog[0].names})
+      // }
       
     }
 
@@ -77,7 +80,7 @@ export default function UserInfo(props: any) {
                       <FontAwesome name="phone" size={35} />
                       <Text>Call</Text>
                     </Pressable>
-                  <Pressable onPress={handleMessage} style={styles.userActionsIcon}>
+                  <Pressable onPress={handleChatLog} style={styles.userActionsIcon}>
                     <FontAwesome name="comments" size={35} />
                     <Text>Message</Text>
                   </Pressable>

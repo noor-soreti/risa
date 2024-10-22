@@ -3,6 +3,7 @@ import userReducer from "@/app/api/features/users/userSlice"
 import { useDispatch, useSelector } from 'react-redux'
 import chatLogReducer from '@/app/api/features/chatLogs/chatLogSlice'
 import contactReducer from '@/app/api/features/contacts/contactSlice'
+import messageReducer from '@/app/api/features/messages/messageSlice'
 
 
 /*
@@ -27,7 +28,8 @@ export const store = configureStore({
     reducer: {
         user: userReducer,
         chatLog: chatLogReducer,
-        contact: contactReducer
+        contact: contactReducer,
+        message: messageReducer
     }
 })
 

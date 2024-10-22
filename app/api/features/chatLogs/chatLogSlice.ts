@@ -1,13 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { createChatLog, getUserChatLogs } from "./chatLogThunk"
 
-interface ChatLogState {
-    chatLog: Set<IChatLog> | null
-    loading: boolean,
-    error: string | null
-}
-
-const initialState: ChatLogState = {
+const initialState: IChatLogState = {
     chatLog: null,
     loading: false,
     error: null

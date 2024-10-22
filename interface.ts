@@ -50,7 +50,32 @@ interface IChatLog {
   }
 
   interface ISendMessage {
-    message: string;
     senderId: number;
-    deliveredAt: number;
+    message: string;
   }
+
+  /*****************************************/
+
+  interface IUserState {
+    user: IUser | null;
+    loading: boolean;
+    error: string | null;
+  }
+
+  interface IChatLogState {
+    chatLog: Set<IChatLog> | null
+    loading: boolean,
+    error: string | null
+}
+
+interface IContactState {
+  contacts: Set<IContact> | []
+  loading: boolean
+  error: string | null
+}
+
+interface IMessageState {
+  message: Set<IMessage> | null,
+  loading: boolean,
+  error: string | null
+}

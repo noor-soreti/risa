@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserChatLogs } from "@/app/api/features/chatLogs/chatLogThunk";
 
 export default function ChatList() {
-    const [newMessage, setNewMessage] = useState(true)
     const [ chats, setChats ] = useState<Array<IChatListItem> | []>([])
     const { chatLog, loading } = useSelector((state) => state.chatLog)  
     const { user } = useSelector((state) => state.user)
     const dispatch = useDispatch()    
+
     
     useEffect(() => {    
         const populateChats = async () => {
@@ -33,34 +33,10 @@ export default function ChatList() {
         )
     } else {
         <View style={styles.noMessage}>
-                    <Ionicons name="sad-outline" size={50}/>
-                    <Text>No Chats Yet!</Text>
-
-                    {/* <Pressable onPress={() => fetchData()}>
-                        <Text>Press</Text>
-                    </Pressable> */}
-
-                </View>
+            <Ionicons name="sad-outline" size={50}/>
+            <Text>No Chats Yet!</Text>
+        </View>
     }
-
-    // return (
-    //     <View>
-    //         {
-    //             chatLog != null ?
-    //             <ChatPreview />
-    //         : 
-    //             <View style={styles.noMessage}>
-    //                 <Ionicons name="sad-outline" size={50}/>
-    //                 <Text>No Chats Yet!</Text>
-
-    //                 {/* <Pressable onPress={() => fetchData()}>
-    //                     <Text>Press</Text>
-    //                 </Pressable> */}
-
-    //             </View>
-    //             }
-    //     </View>
-    // )
 }
 
 const styles = StyleSheet.create({

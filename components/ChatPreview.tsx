@@ -1,34 +1,25 @@
 import { stompClient } from "@/app/api/websocket/stompClient";
-import { ColorPalette } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Image, View } from "react-native";
 import { useSelector } from "react-redux";
 
 export default function ChatPreview() {
     const navigation = useNavigation()
-    const { chatLog } = useSelector((state) => state.chatLog)
+    const { chatLog } = useSelector((state) => state.chatLog)   
 
-    // useEffect(() => {
-    //     const getPreviewInfo = async () => {
-    //         try {
-    //             Object.entries(chats[chat]["users"]).map(e => {
-    //                 const findFullName = [e][0][1]["displayName"]
-                    
-    //                 if (fullName.indexOf(findFullName) == -1) {
-    //                     setFullName(prev=>[...prev, findFullName])
-    //                 }
-    //             })
-    //         } catch (error) {
-    //             console.log(`getPreviewInfo: ${error}`);
-    //         }
-    //     }
-    //     getPreviewInfo()
-    // }, [])
+    const navigateToMessage = (chat: IChatListItem, names: any) => {
+        // stompClient.activate()
+        navigation.navigate('message', {chatId: chat.chatLogId, names})
+    }
 
-    const navigateToMessage = (chat: IChatListItem) => {
-        stompClient.activate()
-        navigation.navigate('message', {chatId: chat.chatLogId})
+    if (chatLog.length == 0) {
+        return (
+            <View style={styles.noMessage}>
+                    <Ionicons name="sad-outline" size={50}/>
+                    <Text>No Chats Yet!</Text>
+            </View>
+        )
     }
     
     return (  
@@ -36,10 +27,7 @@ export default function ChatPreview() {
             {
             Object.keys(chatLog).map(chat => {
                 return(
-                    // <Text>
-                    //     {chatLog[chat].id}
-                    // </Text>
-                <Pressable style={styles.userInfo} onPress={() => navigateToMessage(chatLog[chat])} key={chatLog[chat].chatLogId}>
+                <Pressable style={styles.userInfo} onPress={() => navigateToMessage(chatLog[chat], chatLog[chat].names)} key={chatLog[chat].chatLogId}>
                     <Image source={require('../assets/images/profile.png')} style={styles.image} />
                     <View style={styles.previewText}>
                         <Text style={styles.previewTextDisplayName}>{chatLog[chat].names}</Text>
@@ -78,5 +66,11 @@ const styles = StyleSheet.create({
     previewTextLastMessage: {
         color: "#9E9E9E",
         fontStyle: 'italic'
+    },
+    noMessage: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 250
     }
 })

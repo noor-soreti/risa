@@ -12,6 +12,7 @@ import Inbox from "./(app)/home/inbox/inbox";
 import { Provider, useSelector } from "react-redux";
 import { store } from "./api/store";
 import { AuthProvider } from "@/context/AuthContext";
+import { ActivityIndicator } from "react-native";
 
 const HAS_LAUNCHED = false
 

@@ -1,13 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { getUserContacts } from "./contactThunk"
 
-interface ContactState {
-    contacts: Set<IContact> | []
-    loading: boolean
-    error: string | null
-}
 
-const initialState: ContactState = {
+const initialState: IContactState = {
     contacts: [],
     loading: false,
     error: null

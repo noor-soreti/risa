@@ -16,23 +16,23 @@ import { ReText } from 'react-native-redash';
 const content = [
   {
     title: "Let's talk.",
-    bg: ColorPalette.lemonChiffon,
-    fontColor: ColorPalette.warmBrown,
+    bg: ColorPalette.lemon,
+    fontColor: ColorPalette.coralRed,
   },
   {
     title: "Let's connect.",
     bg: ColorPalette.skyBlue,
-    fontColor: ColorPalette.deepNavy,
+    fontColor: ColorPalette.vibrantPink,
   },
   {
     title: "Let's catch up.",
     bg: ColorPalette.peach,
-    fontColor: ColorPalette.fuchsia,
+    fontColor: ColorPalette.teal,
   },
   {
     title: "Let's VERA",
     bg: ColorPalette.green,
-    fontColor: ColorPalette.charcoal,
+    fontColor: ColorPalette.white,
   },
 ];
 

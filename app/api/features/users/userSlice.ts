@@ -7,13 +7,7 @@ actions
     - describes what changes we want to make in state
 */
 
-interface UserState {
-  user: IUser | null;
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: UserState = {
+const initialState: IUserState = {
     user: null,
     loading: false,
     error: null

@@ -26,7 +26,6 @@ export default function Register({navigation}: any) {
   
   const handleSubmit = async () => {
     const status = await dispatch(register({fullName, phoneNumber, password}))
-    // console.log(status);
     
     if (status.payload != null) {
       Toast.show({
