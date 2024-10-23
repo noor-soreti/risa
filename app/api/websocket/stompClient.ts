@@ -3,7 +3,7 @@ import 'text-encoding-polyfill';
 
 let stompClient: Client;
 
-export const initializeStompClient = (roomId: number) => {
+export const initializeStompClient = (roomId: number, onMessageReceivedCallBack: () => void) => {
     stompClient = new Client({    
         brokerURL: "ws://192.168.100.29:8080/websocket",
         reconnectDelay: 5000,
@@ -14,9 +14,7 @@ export const initializeStompClient = (roomId: number) => {
     })
     stompClient.onConnect = (frame) => {
         const topic = `/topic/chat-${roomId}`
-        stompClient.subscribe(topic, (greeting) => {
-            console.log(JSON.parse(greeting.body).message);
-        })
+        onMessageReceivedCallBack()  // notify component that connection is successful
     }
     stompClient.onStompError = (error) => {
         console.log(error)
@@ -37,12 +35,21 @@ export const initializeStompClient = (roomId: number) => {
         console.log('BEBE');    
     }
     stompClient.activate()
-
 }
 
 export const deactivateStompClient = () => {
     stompClient.deactivate()
 }
+
+export const subscribeToTopic = (roomId: string, messageHandler: (message:any) => void) => {
+    if (stompClient) {
+        stompClient.subscribe(`/topic/chat-${roomId}`, (message) => {
+            console.log("Message received: " + message.body);
+            messageHandler(JSON.parse(message.body))
+        })
+    }
+}
+
 
 export const sendMessage = (roomId: number, message: ISendMessage) => {
     if (stompClient && stompClient.connected) {

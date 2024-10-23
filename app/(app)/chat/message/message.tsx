@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { deactivateStompClient, initializeStompClient, sendMessage } from "@/app/api/websocket/stompClient";
+import { deactivateStompClient, initializeStompClient, sendMessage, subscribeToTopic } from "@/app/api/websocket/stompClient";
 import { useDispatch, useSelector } from "react-redux";
 import { getChatLogMessages } from "@/app/api/features/messages/messageThunk";
 
@@ -13,43 +13,48 @@ export default function Message(props: any) {
     const iconsBottom = ['camera', 'image']
     const navigation = useNavigation()
     const [inputText, setInputText] = useState('')
-    const [ messages, setMessages ] = useState([])
+    const [ messages, setMessages ] = useState<Set<IMessage> | []>([])
     const [ userInfo, setUserInfo ] = useState()
     const { chatId, names } = props.route.params   
     const { user } = useSelector((state) => state.user)   
-    const dispatch = useDispatch()  
     
     useEffect(() => {
-        initializeStompClient(chatId)
-        const getMess = async () => {
-            const messages = await dispatch(getChatLogMessages(chatId))   
-            setMessages(messages.payload)            
-        }
-        getMess()
+        initializeStompClient(
+            chatId, 
+            () => {
+                // on successful connection -> subscribe to chat room topic
+                subscribeToTopic(chatId, (message) => {
+                    setMessages((prev)=>[...prev, message])
+                })
+        })
+        // const getMess = async () => {
+        //     const messages = await dispatch(getChatLogMessages(chatId))   
+        //     setMessages(messages.payload)            
+        // }
+        // getMess()
     }, [])
-    
-    const handleHeaderOptions = (option: string) => {
-        if (option == 'cog') {
-            navigation.navigate('userInfo', userInfo)
-        } else {
-            console.log(option);
-        }
-    }
 
     const handleSendMessage = async () => {
         let newMessage: ISendMessage = {
             senderId: user.id,
             message: inputText,
         }
-        // dispatch(postMessage({chatId, newMessage}))
         sendMessage(chatId, newMessage)
-
         setInputText("")
+        // dispatch(postMessage({chatId, newMessage}))
     }
 
     const handleGoBack = () => {
         deactivateStompClient()
         navigation.goBack()
+    }
+
+    const handleHeaderOptions = (option: string) => {
+        if (option == 'cog') {
+            navigation.navigate('userInfo', userInfo)
+        } else {
+            console.log(option);
+        }
     }
 
     return (
@@ -90,15 +95,15 @@ export default function Message(props: any) {
                             <View>
                                 {
                                     item.senderId == user.id ?
-                                    <View style={[styles.messageContainer, styles.receiverMessageContainer]}> 
-                                        <View style={{display: 'flex'}}>
+                                    <View style={[styles.messageContainer]}> 
+                                        <View style={styles.senderMessageContainer}>
                                             <Text style={{color: 'white'}}>{item.message} </Text>
                                             <Text style={{color: 'white'}}>{item.deliveredAt} </Text>
                                         </View>
                                     </View>
                                     :
-                                    <View style={[styles.messageContainer, styles.senderMessageContainer]}> 
-                                        <View style={{display: 'flex'}}>
+                                    <View style={[styles.messageContainer]}> 
+                                        <View style={styles.receiverMessageContainer}>
                                             <Text style={{color: 'white'}}>{item.message} </Text>
                                             <Text style={{color: 'white'}}>{item.deliveredAt} </Text>
                                         </View>
@@ -121,7 +126,7 @@ export default function Message(props: any) {
                         <View style={styles.bottomLeft}>
                             {
                                 iconsBottom.map(name => (
-                                    <Pressable onPress={() => console.log(name)}>
+                                    <Pressable onPress={() => console.log(name)} key={name}>
                                         <FontAwesome name={name} size={20}/>
                                     </Pressable>
                                 ))
@@ -190,17 +195,24 @@ const styles = StyleSheet.create({
         padding: 10,
       },
       messageContainer: {
-        borderRadius:5, 
-        padding:10,
-        margin: 5
+        display: 'flex',
+        flexDirection: 'column',
     },
     senderMessageContainer: {
-        backgroundColor: '#2d2d2e',
-        marginRight: 50
+        backgroundColor: '#7CA4FC', 
+        borderRadius:5, 
+        padding:10,
+        margin: 5,
+        display: 'flex',
+        alignSelf: 'flex-end',
     },
     receiverMessageContainer: {
-        backgroundColor: '#7CA4FC', 
-        marginLeft: 50
+        backgroundColor: '#2d2d2e',
+        borderRadius:5, 
+        padding:10,
+        margin: 5,
+        display: 'flex',
+        alignSelf: 'flex-start',
     },
       bottom: {
         display: 'flex',
