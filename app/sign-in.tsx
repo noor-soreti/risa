@@ -19,9 +19,6 @@ export default function LogInScreen({navigation}: any) {
 
     const isButtonDisabled = !phoneNumber || password.length < 6
 
-    console.log(error);
-    
-
     const handleSubmit = () => {
       const test = async () => { 
         const err = await dispatch(loginUser({phoneNumber, password}))

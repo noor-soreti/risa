@@ -4,9 +4,9 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { ColorPalette } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { sendMessage, stompClient } from "@/app/api/websocket/stompClient";
+import { deactivateStompClient, initializeStompClient, sendMessage } from "@/app/api/websocket/stompClient";
 import { useDispatch, useSelector } from "react-redux";
-import { getChatLogMessages, postMessage } from "@/app/api/features/messages/messageThunk";
+import { getChatLogMessages } from "@/app/api/features/messages/messageThunk";
 
 export default function Message(props: any) {
     const iconsTop = ['phone', 'camera', 'cog']
@@ -17,9 +17,10 @@ export default function Message(props: any) {
     const [ userInfo, setUserInfo ] = useState()
     const { chatId, names } = props.route.params   
     const { user } = useSelector((state) => state.user)   
-    const dispatch = useDispatch()     
-
+    const dispatch = useDispatch()  
+    
     useEffect(() => {
+        initializeStompClient(chatId)
         const getMess = async () => {
             const messages = await dispatch(getChatLogMessages(chatId))   
             setMessages(messages.payload)            
@@ -40,12 +41,14 @@ export default function Message(props: any) {
             senderId: user.id,
             message: inputText,
         }
-        dispatch(postMessage({chatId, newMessage}))
+        // dispatch(postMessage({chatId, newMessage}))
+        sendMessage(chatId, newMessage)
+
         setInputText("")
     }
 
     const handleGoBack = () => {
-        // stompClient.deactivate()
+        deactivateStompClient()
         navigation.goBack()
     }
 

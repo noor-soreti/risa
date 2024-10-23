@@ -9,7 +9,6 @@ export default function ChatPreview() {
     const { chatLog } = useSelector((state) => state.chatLog)   
 
     const navigateToMessage = (chat: IChatListItem, names: any) => {
-        // stompClient.activate()
         navigation.navigate('message', {chatId: chat.chatLogId, names})
     }
 
