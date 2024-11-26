@@ -21,34 +21,49 @@ export default function Register({navigation}: any) {
   const [warn, setWarn] = useState('')
   const { user, loading, error } = useSelector((state)=> state.user)
   const dispatch = useDispatch()
-  const isButtonDisabled = !phoneNumber || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName  
-
+  const isButtonDisabled = !phoneNumber || password != confirmPassword ||  password.length < 6 || confirmPassword.length < 6 || !fullName    
   
   const handleSubmit = async () => {
     const status = await dispatch(register({fullName, phoneNumber, password}))
     
-    if (status.payload != null) {
-      Toast.show({
-        type: 'error',
-        visibilityTime: 5000,
-        text1: 'Woops!',
-        text2: `This phone number seems to already be registered`
-      })
-    // let uriParts = imageUri?.split(".")
-    // let fileType = uriParts[uriParts?.length - 1]
-    // let formData = new FormData()
-    // formData.append('photo', {
-    //   imageUri,
-    //   name: `photo.${fileType}`,
-    //   type: `image/${fileType}`
-    // })
-    // try {
-    //   console.log(formData._parts);
-    //   let t = postImage(formData) 
-    // } catch (error) {
-    //   throw error
-    // }
+    switch (status.payload) {
+      case 409:
+        Toast.show({
+          type: 'error',
+          visibilityTime: 5000,
+          text1: 'Woops!',
+          text2: `This phone number seems to already be registered`
+        })
+        // let uriParts = imageUri?.split(".")
+        // let fileType = uriParts[uriParts?.length - 1]
+        // let formData = new FormData()
+        // formData.append('photo', {
+        //   imageUri,
+        //   name: `photo.${fileType}`,
+        //   type: `image/${fileType}`
+        // })
+        // try {
+        //   console.log(formData._parts);
+        //   let t = postImage(formData) 
+        // } catch (error) {
+        //   throw error
+        // }
+      case 404: 
+        Toast.show({
+          type: 'error',
+          visibilityTime: 5000,
+          text1: 'Woops!',
+          text2: `Server(s) are down`
+        })  
+      default: 
+        Toast.show({
+          type: 'error',
+          visibilityTime: 5000,
+          text1: 'Woops!',
+          text2: `Something went wrong... please try again`
+        })
     }
+    
   }
 
   const pickImage = async () => {

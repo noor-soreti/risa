@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getChatLogMessages } from "./messageThunk"
+import { getChatLogMessages, postMessage } from "./messageThunk"
 
 const initialState: IMessageState = {
     message: null,
@@ -13,6 +13,7 @@ const messageSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+        // getMessage
         .addCase(getChatLogMessages.pending, (state) => {
             state.loading = true
         })
@@ -21,6 +22,18 @@ const messageSlice = createSlice({
             state.loading = false
         })
         .addCase(getChatLogMessages.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        })
+        // postMessage
+        .addCase(postMessage.pending, (state) => {
+            state.loading = true
+        })
+        .addCase(postMessage.fulfilled, (state, action) => {
+            state.message = action.payload
+            state.loading = false
+        })
+        .addCase(postMessage.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
         })

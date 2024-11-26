@@ -1,4 +1,4 @@
-import { stompClient } from "@/app/api/websocket/stompClient";
+// import { stompClient } from "@/app/api/websocket/stompClient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { Pressable, StyleSheet, Text, Image, View } from "react-native";

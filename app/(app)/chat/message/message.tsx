@@ -6,7 +6,7 @@ import { ColorPalette } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { deactivateStompClient, initializeStompClient, sendMessage, subscribeToTopic } from "@/app/api/websocket/stompClient";
 import { useDispatch, useSelector } from "react-redux";
-import { getChatLogMessages } from "@/app/api/features/messages/messageThunk";
+import { getChatLogMessages, postMessage } from "@/app/api/features/messages/messageThunk";
 
 export default function Message(props: any) {
     const iconsTop = ['phone', 'camera', 'cog']
@@ -14,17 +14,19 @@ export default function Message(props: any) {
     const navigation = useNavigation()
     const [inputText, setInputText] = useState('')
     const [ messages, setMessages ] = useState<Set<IMessage> | []>([])
-    const [ userInfo, setUserInfo ] = useState()
     const { chatId, names } = props.route.params   
-    const { user } = useSelector((state) => state.user)   
-    
+    const { user } = useSelector((state) => state.user)  
+    const dispatch = useDispatch() 
+
     useEffect(() => {
         initializeStompClient(
             chatId, 
             () => {
                 // on successful connection -> subscribe to chat room topic
                 subscribeToTopic(chatId, (message) => {
-                    setMessages((prev)=>[...prev, message])
+                    // check if message is duplicate before adding to messages
+                    // update messages set to display on screen
+                    setMessages(prev=>[...prev, message])
                 })
         })
         // const getMess = async () => {
@@ -39,9 +41,9 @@ export default function Message(props: any) {
             senderId: user.id,
             message: inputText,
         }
-        sendMessage(chatId, newMessage)
+
+        await dispatch(postMessage({chatId, newMessage}))
         setInputText("")
-        // dispatch(postMessage({chatId, newMessage}))
     }
 
     const handleGoBack = () => {
@@ -51,7 +53,8 @@ export default function Message(props: any) {
 
     const handleHeaderOptions = (option: string) => {
         if (option == 'cog') {
-            navigation.navigate('userInfo', userInfo)
+            // should NOT nav to userInfo
+            // navigation.navigate('userInfo', userInfo)
         } else {
             console.log(option);
         }
@@ -114,7 +117,6 @@ export default function Message(props: any) {
                             keyExtractor={item => item.id}
                             style={styles.center}
                         >
-
                         </FlatList>
                     }
             </KeyboardAvoidingView>

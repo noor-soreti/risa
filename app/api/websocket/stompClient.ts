@@ -1,7 +1,7 @@
 import { Client, Stomp } from "@stomp/stompjs"
 import 'text-encoding-polyfill';
 
-let stompClient: Client;
+let stompClient: Client | null = null;
 
 export const initializeStompClient = (roomId: number, onMessageReceivedCallBack: () => void) => {
     stompClient = new Client({    
@@ -14,7 +14,7 @@ export const initializeStompClient = (roomId: number, onMessageReceivedCallBack:
     })
     stompClient.onConnect = (frame) => {
         const topic = `/topic/chat-${roomId}`
-        onMessageReceivedCallBack()  // notify component that connection is successful
+        onMessageReceivedCallBack()  // update component when message is received
     }
     stompClient.onStompError = (error) => {
         console.log(error)
@@ -24,7 +24,8 @@ export const initializeStompClient = (roomId: number, onMessageReceivedCallBack:
     }
 
     stompClient.onDisconnect = () => {
-        console.log("DISCONNECT");
+        console.log("DISCONNECT");        
+        stompClient = null
     }
 
     stompClient.debug = (str) => {
@@ -38,7 +39,7 @@ export const initializeStompClient = (roomId: number, onMessageReceivedCallBack:
 }
 
 export const deactivateStompClient = () => {
-    stompClient.deactivate()
+    stompClient?.deactivate()
 }
 
 export const subscribeToTopic = (roomId: string, messageHandler: (message:any) => void) => {
@@ -49,7 +50,6 @@ export const subscribeToTopic = (roomId: string, messageHandler: (message:any) =
         })
     }
 }
-
 
 export const sendMessage = (roomId: number, message: ISendMessage) => {
     if (stompClient && stompClient.connected) {
