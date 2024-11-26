@@ -21,7 +21,7 @@ export default function LogInScreen({navigation}: any) {
 
     const handleSubmit = () => {
       const test = async () => { 
-        const err = await dispatch(loginUser({phoneNumber, password}))
+        const err = await dispatch(loginUser({phoneNumber, password}))        
         switch (err.payload) {
           case 500:
             Toast.show({
