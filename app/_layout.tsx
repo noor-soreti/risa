@@ -13,6 +13,7 @@ import { Provider, useSelector } from "react-redux";
 import { store } from "./api/store";
 import { AuthProvider } from "@/context/AuthContext";
 import { ActivityIndicator } from "react-native";
+import React from "react";
 
 const HAS_LAUNCHED = false
 

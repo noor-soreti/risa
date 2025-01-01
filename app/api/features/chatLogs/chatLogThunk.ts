@@ -20,6 +20,8 @@ export const createChatLog = createAsyncThunk(
             const response = await api.post(`/api/chatlog`, uids)
             return response.data
         } catch (error: any) {
+            console.log(error);
+            
             return rejectWithValue(error.status)
         }
     }
