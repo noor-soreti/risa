@@ -9,11 +9,11 @@ The app leverages Expo for the frontend and a custom backend in Java, utilizes W
 ## App Features
 
 - **Real-Time Messaging**: Instant delivery of messages between users.
+- **State Management**: Powered by Redux for efficient global state handling.
+- **Cross-Platform Compatibility**: Built with React Native for a consistent experience across Android and iOS devices.
 <!-- - **User Authentication**: Secure login/signup functionality using Firebase Authentication. -->
 <!-- - **User Profiles**: Each user has a unique profile with custom attributes. -->
-- **State Management**: Powered by Redux for efficient global state handling.
 <!-- - **Media Sharing**: Users can upload and share images in conversations. -->
-- **Cross-Platform Compatibility**: Built with React Native for a consistent experience across Android and iOS devices.
 
 ## App Architecture
 
@@ -28,11 +28,10 @@ The application is built on a modern stack with a custom backend the dockerizes 
 - **Language**: Java (Spring Boot)
 - **Database**: MySQL (containerized with Docker for scalability)
 - **Real-Time Communication**: WebSockets for real-time message delivery
-<!-- - **Authentication**: Firebase Authentication for user registration and login -->
 - **Media Storage**: Local storage for storing media files
+<!-- - **Authentication**: Firebase Authentication for user registration and login -->
 
 <!-- ## User Authentication
-
 Firebase Authentication ensures secure user management:
 - Users must sign up with an email and password or log in using existing credentials.
 - Upon login, Firebase issues JSON Web Tokens (JWTs) for authentication and secure resource access:
@@ -40,20 +39,20 @@ Firebase Authentication ensures secure user management:
   - **ID Token**: Provides user identity claims.
   - **Refresh Token**: Retrieves new access tokens upon expiration. -->
 
-## Dockerized MySQL Database
+### Dockerized MySQL Database
 
 To ensure scalability and ease of deployment, the MySQL database is containerized using Docker. This setup allows the backend to run consistently across different environments and simplifies the management of database instances.
 
-### Backend Repository
+<!-- ### Backend Repository
 The backend is built with Java using Spring Boot and MySQL. The backend is dockerized for scalability, making it easier to scale and deploy the application. You can find the backend code here:  
 [Backend Repository](https://github.com/noor-soreti/RisaBackendDemo)
 
 ### WebSocket Communication
-WebSocket is used for real-time messaging between users. When a message is sent, it is broadcasted to the recipient via WebSocket.
+WebSocket is used for real-time messaging between users. When a message is sent, it is broadcasted to the recipient via WebSocket. -->
 
-## Development Highlights
+<!-- ## Development Highlights -->
 
-### Challenges Overcome
+<!-- ### Challenges Overcome
 - **Real-Time Messaging**: Utilizes WebSockets for real-time message delivery, ensuring instant communication between users.
 - **State Management**: Successfully integrated Redux to manage user authentication and app-wide state.
-- **Cross-Platform Compatibility**: Ensured consistent design and functionality across iOS and Android.
+- **Cross-Platform Compatibility**: Ensured consistent design and functionality across iOS and Android. -->
