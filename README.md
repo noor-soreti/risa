@@ -31,14 +31,14 @@ The application is built on a modern stack with a custom backend the dockerizes 
 <!-- - **Authentication**: Firebase Authentication for user registration and login -->
 - **Media Storage**: Local storage for storing media files
 
-## User Authentication
+<!-- ## User Authentication
 
 Firebase Authentication ensures secure user management:
 - Users must sign up with an email and password or log in using existing credentials.
 - Upon login, Firebase issues JSON Web Tokens (JWTs) for authentication and secure resource access:
   - **Access Token**: Authorizes API operations.
   - **ID Token**: Provides user identity claims.
-  - **Refresh Token**: Retrieves new access tokens upon expiration.
+  - **Refresh Token**: Retrieves new access tokens upon expiration. -->
 
 ## Dockerized MySQL Database
 
