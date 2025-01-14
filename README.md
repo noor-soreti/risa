@@ -10,25 +10,27 @@ The app leverages Expo for the frontend and a custom backend in Java, utilizes W
 
 - **Real-Time Messaging**: Instant delivery of messages between users.
 - **State Management**: Powered by Redux for efficient global state handling.
-- **Cross-Platform Compatibility**: Built with React Native for a consistent experience across Android and iOS devices.
+- **Cross-Platform Compatibility**: Built with Expo (React Native) for a consistent experience across Android and iOS devices.
 <!-- - **User Authentication**: Secure login/signup functionality using Firebase Authentication. -->
 <!-- - **User Profiles**: Each user has a unique profile with custom attributes. -->
 <!-- - **Media Sharing**: Users can upload and share images in conversations. -->
 
 ## App Architecture
 
-The application is built on a modern stack with a custom backend the dockerizes MySQL database for scalability. Below is an overview of the technologies used:
+The application is built on a modern stack with a custom backend written in Java that dockerizes MySQL database for scalability. Below is an overview of the technologies used:
 
 ### Frontend
 - **Framework**: Expo (React Native)
 - **State Management**: Redux
-- **UI Design**: Focused on a bright, tangerine-inspired aesthetic with minimal use of blue or green.
+- **Backend API Calls**: Axios
+- **WebSocket Client**: Stomp.js
 
 ### Backend
-- **Language**: Java (Spring Boot)
+- **Language**: Java 
+- **Framework**: Spring Boot
 - **Database**: MySQL (containerized with Docker for scalability)
 - **Real-Time Communication**: WebSockets for real-time message delivery
-- **Media Storage**: Local storage for storing media files
+<!-- - **Media Storage**: Local storage for storing media files -->
 <!-- - **Authentication**: Firebase Authentication for user registration and login -->
 
 <!-- ## User Authentication
